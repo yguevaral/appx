@@ -1,8 +1,11 @@
+import 'package:appx/helpers/mostrar_alerta.dart';
+import 'package:appx/services/auth_service.dart';
 import 'package:appx/widgets/boton_azul.dart';
 import 'package:appx/widgets/custom_input.dart';
 import 'package:appx/widgets/labels.dart';
 import 'package:appx/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -17,14 +20,17 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Logo(titulo: 'Messenger',),
+                  Logo(
+                    titulo: 'Messenger',
+                  ),
                   _Form(),
                   Labels(
                     ruta: 'register',
                     titulo: 'No tienes una cuenta?',
                     subtitulo: 'Crea una ahora!',
                   ),
-                  Text('Terminos y condiciones de uso', style: TextStyle(fontWeight: FontWeight.w200))
+                  Text('Terminos y condiciones de uso',
+                      style: TextStyle(fontWeight: FontWeight.w200))
                 ],
               ),
             ),
@@ -46,6 +52,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: EdgeInsetsDirectional.only(top: 40.0),
       padding: EdgeInsets.symmetric(horizontal: 50.0),
@@ -65,10 +73,22 @@ class __FormState extends State<_Form> {
           ),
           BotonAzul(
             text: 'Ingrese',
-            onPressed: () {
-              print(emailCtrl.text);
-              print(passCtrl.text);
-            },
+            onPressed: authService.autenticando
+                ? null
+                : () async {
+                    // bajar el teclado
+                    FocusScope.of(context).unfocus();
+                    final loginOk = await authService.login(
+                        emailCtrl.text.trim(), passCtrl.text.trim());
+                    if (loginOk) {
+                      // Navegar a otra pantalla
+
+                      Navigator.pushReplacementNamed(context, 'usuarios');
+                    } else {
+                      mostrarAlerta(context, 'Login incorrecto',
+                          'Revise sus credenciales nuevamente');
+                    }
+                  },
           )
         ],
       ),

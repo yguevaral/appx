@@ -1,5 +1,8 @@
 import 'package:appx/models/usuario.dart';
 import 'package:appx/services/auth_service.dart';
+import 'package:appx/services/chat_service.dart';
+import 'package:appx/services/socket_service.dart';
+import 'package:appx/services/usuarios_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -10,24 +13,29 @@ class UsuariosPage extends StatefulWidget {
 }
 
 class _UsuariosPageState extends State<UsuariosPage> {
+  final usuarioService = new UsuariosService();
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  final usuarios = [
-    Usuario(uid: '1', nombre: 'Maria', email: 'maria@app.com', online: true),
-    Usuario(uid: '2', nombre: 'Jose', email: 'jose@app.com', online: false),
-    Usuario(uid: '3', nombre: 'Allan', email: 'allan@app.com', online: true),
-  ];
+  List<Usuario> usuarios = [];
+
+  @override
+  void initState() {
+    this._cargarUsuarios();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-
     final usuario = authService.usuario;
+    final socketService = Provider.of<SocketService>(context);
 
     return Scaffold(
         appBar: AppBar(
           title: Center(
-              child: Text(usuario.nombre, style: TextStyle(color: Colors.black))),
+              child:
+                  Text(usuario.nombre, style: TextStyle(color: Colors.black))),
           elevation: 1,
           backgroundColor: Colors.white,
           leading: IconButton(
@@ -36,7 +44,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
               color: Colors.black,
               onPressed: () {
                 // desconectar socket
-
+                socketService.disconnect();
                 Navigator.pushReplacementNamed(context, 'login');
                 AuthService.deleteToken();
               },
@@ -46,21 +54,21 @@ class _UsuariosPageState extends State<UsuariosPage> {
           actions: <Widget>[
             Container(
               margin: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.check_circle,
-                color: Colors.blue[400],
-              ),
+              child: (socketService.serverStatus == ServerStatus.Online)
+                  ? Icon(Icons.check_circle, color: Colors.blue[400])
+                  : Icon(Icons.offline_bolt, color: Colors.red),
             )
           ],
         ),
         body: SmartRefresher(
           controller: _refreshController,
           enablePullDown: true,
+          physics: BouncingScrollPhysics(),
           onRefresh: _cargarUsuarios,
-          header: WaterDropHeader(
-            complete: Icon(Icons.check, color: Colors.blue[400]),
-            waterDropColor: Colors.blue[400],
-          ),
+          // header: WaterDropHeader(
+          //   complete: Icon(Icons.check, color: Colors.blue[400]),
+          //   waterDropColor: Colors.blue[400],
+          // ),
           child: _listViewUsuarios(),
         ));
   }
@@ -88,12 +96,18 @@ class _UsuariosPageState extends State<UsuariosPage> {
             color: usuario.online ? Colors.green : Colors.red,
             borderRadius: BorderRadius.circular(100.0)),
       ),
+      onTap: () {
+        final chatService = Provider.of<ChatService>(context, listen: false);
+        chatService.usuarioPara = usuario;
+        Navigator.pushNamed(context, 'chat');
+      },
     );
   }
 
   _cargarUsuarios() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+    this.usuarios = await usuarioService.getUsuarios();
+    setState(() {});
+    // await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }

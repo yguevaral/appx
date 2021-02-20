@@ -23,12 +23,11 @@ class SocketService with ChangeNotifier {
       'transports': ['websocket'],
       'autoConnect': true,
       'forceNew': true,
-      'extraHeaders': {
-        'x-token' : token
-      }
+      'extraHeaders': {'x-token': token}
     });
 
     this._socket.on('connect', (_) {
+
       this._serverStatus = ServerStatus.Online;
       notifyListeners();
     });

@@ -1,8 +1,11 @@
+import 'package:appx/global/environment.dart';
 import 'package:appx/models/usuario.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/chat_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
+import 'package:appx/widgets/header_drawer.dart';
+import 'package:appx/widgets/menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -31,35 +34,23 @@ class _UsuariosPageState extends State<UsuariosPage> {
     final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
 
+    // usuario.nombre
+
     return Scaffold(
         appBar: AppBar(
-          title: Center(
-              child:
-                  Text(usuario.nombre, style: TextStyle(color: Colors.black))),
+          title: HeaderDrawer(),
           elevation: 1,
-          backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: IconButton(
-              icon: Icon(Icons.exit_to_app),
-              color: Colors.black,
-              onPressed: () {
-                // desconectar socket
-                socketService.disconnect();
-                Navigator.pushReplacementNamed(context, 'login');
-                AuthService.deleteToken();
-              },
-            ),
-            onPressed: () {},
-          ),
+          backgroundColor: Environment.colorApp1,
           actions: <Widget>[
             Container(
               margin: EdgeInsets.only(right: 10),
               child: (socketService.serverStatus == ServerStatus.Online)
-                  ? Icon(Icons.check_circle, color: Colors.blue[400])
+                  ? Icon(Icons.check_circle, color: Colors.green)
                   : Icon(Icons.offline_bolt, color: Colors.red),
             )
           ],
         ),
+        drawer: MenuWidget(),
         body: SmartRefresher(
           controller: _refreshController,
           enablePullDown: true,

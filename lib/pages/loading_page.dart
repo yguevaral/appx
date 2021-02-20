@@ -1,3 +1,5 @@
+import 'package:appx/global/environment.dart';
+import 'package:appx/pages/home_page.dart';
 import 'package:appx/pages/login_page.dart';
 import 'package:appx/pages/usuarios_page.dart';
 import 'package:appx/services/auth_service.dart';
@@ -13,8 +15,16 @@ class LoadingPage extends StatelessWidget {
       body: FutureBuilder(
           future: checkLoginState(context),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            return Center(
-              child: Text('Espere...'),
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 30.0),
+              color: Environment.colorApp1,
+              child: Center(
+                child: Image(
+                image: AssetImage('assets/splash_logo.jpeg'),
+                fit: BoxFit.contain,
+                width: double.infinity
+              ),
+              ),
             );
           }),
     );
@@ -32,7 +42,7 @@ class LoadingPage extends StatelessWidget {
       Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-              pageBuilder: (_, __, ___) => UsuariosPage(),
+              pageBuilder: (_, __, ___) => HomePage(),
               transitionDuration: Duration(milliseconds: 0)));
     } else {
       // Navigator.pushReplacementNamed(context, 'login');

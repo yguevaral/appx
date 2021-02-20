@@ -1,3 +1,4 @@
+import 'package:appx/global/environment.dart';
 import 'package:flutter/material.dart';
 
 class Labels extends StatelessWidget {
@@ -26,7 +27,7 @@ class Labels extends StatelessWidget {
           GestureDetector(
             child: Text(this.subtitulo,
                 style: TextStyle(
-                    color: Colors.blue[600],
+                    color: Environment.colorApp1,
                     fontSize: 18,
                     fontWeight: FontWeight.bold)),
             onTap: () {

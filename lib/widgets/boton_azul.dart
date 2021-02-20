@@ -1,3 +1,4 @@
+import 'package:appx/global/environment.dart';
 import 'package:flutter/material.dart';
 
 class BotonAzul extends StatelessWidget {
@@ -15,7 +16,7 @@ class BotonAzul extends StatelessWidget {
     return RaisedButton(
       elevation: 2.0,
       highlightElevation: 5.0,
-      color: Colors.blue,
+      color: Environment.colorApp1,
       shape: StadiumBorder(),
       onPressed: this.onPressed,
       child: Container(

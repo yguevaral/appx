@@ -1,4 +1,5 @@
 import 'package:appx/pages/chat_page.dart';
+import 'package:appx/pages/cita_page.dart';
 import 'package:appx/pages/home_page.dart';
 import 'package:appx/pages/loading_page.dart';
 import 'package:appx/pages/login_page.dart';
@@ -12,5 +13,7 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'login' : (_) => LoginPage(),
   'register' : (_) => RegisterPage(),
   'loading' : (_) => LoadingPage(),
-  'home' : (_) => HomePage()
+  'home' : (_) => HomePage(),
+  'cita' : (_) => CitaPage(),
+
 };

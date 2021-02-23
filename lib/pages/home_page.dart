@@ -69,7 +69,12 @@ class _HomePageState extends State<HomePage> {
                   value: _enlinea,
                   activeColor: Colors.green,
                   inactiveThumbColor: Colors.red,
-                  title: Text( _enlinea ? "En linea" : "Fuera de linea", style: TextStyle(color: _enlinea ? Colors.green : Colors.red, fontWeight: FontWeight.bold), ),
+                  title: Text(
+                    _enlinea ? "En linea" : "Fuera de linea",
+                    style: TextStyle(
+                        color: _enlinea ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold),
+                  ),
                   controlAffinity: ListTileControlAffinity.trailing,
                   onChanged: (value) {
                     setState(() {
@@ -81,12 +86,36 @@ class _HomePageState extends State<HomePage> {
                 Table(
                   children: [
                     TableRow(children: [
-                      _crearBotonRedondeado('Chat', 'assets/iconChat.png', _drawChatPage, context),
-                      _crearBotonRedondeado('Videollamada', 'assets/iconVideoLlamada.png', _drawVideoLlamada, context)
+                      _crearBotonRedondeado(
+                          'Chat',
+                          'assets/iconChat.png',
+                          _drawChatPage,
+                          context,
+                          Alignment.topLeft,
+                          Alignment.bottomRight),
+                      _crearBotonRedondeado(
+                          'Videollamada',
+                          'assets/iconVideoLlamada.png',
+                          _drawVideoLlamada,
+                          context,
+                          Alignment.topRight,
+                          Alignment.bottomLeft)
                     ]),
                     TableRow(children: [
-                      _crearBotonRedondeado('Cita a domicilio', 'assets/iconCita.png', _drawCita, context),
-                      _crearBotonRedondeado('Historial', 'assets/historial_medico.png', _drawHistorial, context)
+                      _crearBotonRedondeado(
+                          'Cita a domicilio',
+                          'assets/iconCita.png',
+                          _drawCita,
+                          context,
+                          Alignment.bottomLeft,
+                          Alignment.topRight),
+                      _crearBotonRedondeado(
+                          'Historial',
+                          'assets/historial_medico.png',
+                          _drawHistorial,
+                          context,
+                          Alignment.bottomRight,
+                          Alignment.topLeft)
                     ])
                   ],
                 )
@@ -96,15 +125,28 @@ class _HomePageState extends State<HomePage> {
         ));
   }
 
-  Widget _crearBotonRedondeado(String texto, String strIcon, Function fntOnPresed, context) {
-
+  Widget _crearBotonRedondeado(
+      String texto,
+      String strIcon,
+      Function fntOnPresed,
+      context,
+      AlignmentGeometry begin,
+      AlignmentGeometry end) {
     return GestureDetector(
       child: Container(
         height: 130.0,
         margin: EdgeInsets.all(2.0),
         decoration: BoxDecoration(
-          color: Environment.colorApp1,
-          borderRadius: BorderRadius.circular(10.0)
+          gradient: LinearGradient(
+            begin: begin,
+            end: end,
+            colors: [
+              Environment.colorApp1,
+              Color.fromRGBO(95, 161, 205, 1.0),
+              Color.fromRGBO(165, 221, 235, 1.0),
+            ],
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(12.0)),
         ),
         child: Container(
           margin: EdgeInsets.only(left: 10.0),
@@ -114,14 +156,15 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               SizedBox(height: 2.0),
               CircleAvatar(
-                radius: 25.0,
-                backgroundColor: Environment.colorApp1,
-                child: Image(
-                  image: AssetImage(strIcon),
-                  fit: BoxFit.cover,
-                )
-              ),
-              Text(texto, style: TextStyle(color: Colors.white)),
+                  radius: 25.0,
+                  backgroundColor: Colors.transparent,
+                  child: Image(
+                    image: AssetImage(strIcon),
+                    fit: BoxFit.cover,
+                  )),
+              Text(texto,
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
               SizedBox(height: 15.0)
             ],
           ),
@@ -131,22 +174,31 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _drawChatPage(BuildContext context){
-    Navigator.pushNamed(context, 'usuarios');
+  _drawChatPage(BuildContext context) {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final usuario = authService.usuario;
+
+    if (usuario.tipo == 'P') {
+      Navigator.pushNamed(context, 'cita');
+    }
+    else {
+      mostrarAlerta(context, 'Chats', 'Mostrar chats activos del medico');
+
+    }
+
   }
 
-  _drawVideoLlamada(BuildContext context){
-    mostrarAlerta(context, 'Alerta', 'Pronto estara disponible esta opcion' );
+  _drawVideoLlamada(BuildContext context) {
+    mostrarAlerta(context, 'Alerta', 'Pronto estara disponible esta opcion');
     // Navigator.pushNamed(context, 'usuarios');
   }
 
-  _drawCita(BuildContext context){
-    mostrarAlerta(context, 'Alerta', 'Pronto estara disponible esta opcion' );
+  _drawCita(BuildContext context) {
+    mostrarAlerta(context, 'Alerta', 'Pronto estara disponible esta opcion');
     // Navigator.pushNamed(context, 'usuarios');
   }
 
-  _drawHistorial(BuildContext context){
+  _drawHistorial(BuildContext context) {
     Navigator.pushNamed(context, 'usuarios');
   }
-
 }

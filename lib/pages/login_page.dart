@@ -1,4 +1,5 @@
 import 'package:appx/helpers/mostrar_alerta.dart';
+import 'package:appx/helpers/url_navegador.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/widgets/boton_azul.dart';
@@ -12,32 +13,37 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xffF2F2F2),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.90,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Logo(
-                    titulo: 'Messenger',
-                  ),
-                  _Form(),
-                  Labels(
-                    ruta: 'register',
-                    titulo: 'No tienes una cuenta?',
-                    subtitulo: 'Crea una ahora!',
-                  ),
-                  Text('Terminos y condiciones de uso',
-                      style: TextStyle(fontWeight: FontWeight.w200))
-                ],
-              ),
+      backgroundColor: Color.fromRGBO(247,247,247, 1),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.90,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Logo(
+                  titulo: 'Iniciar sesión',
+                ),
+                _Form(),
+                Labels(
+                  ruta: 'register',
+                  titulo: 'No tienes una cuenta?',
+                  subtitulo: 'Registrate',
+                ),
+                GestureDetector(
+                  onTap: () => showUrlNavegadorInterno('https://appxguatemala.app/'),
+                  child: Text('Terminos y condiciones de uso',
+                      style: TextStyle(fontWeight: FontWeight.w200)),
+                )
+              ],
             ),
           ),
+        ),
         ));
   }
+
+
 }
 
 class _Form extends StatefulWidget {
@@ -57,8 +63,8 @@ class __FormState extends State<_Form> {
     final socketService = Provider.of<SocketService>(context);
 
     return Container(
-      margin: EdgeInsetsDirectional.only(top: 40.0),
-      padding: EdgeInsets.symmetric(horizontal: 50.0),
+      margin: EdgeInsetsDirectional.only(top: 20.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         children: <Widget>[
           CustomInput(
@@ -74,7 +80,7 @@ class __FormState extends State<_Form> {
             textEditingController: passCtrl,
           ),
           BotonAzul(
-            text: 'Ingrese',
+            text: 'Iniciar sesión',
             onPressed: authService.autenticando
                 ? null
                 : () async {
@@ -85,7 +91,7 @@ class __FormState extends State<_Form> {
                     if (loginOk) {
                       // Navegar a otra pantalla
                       socketService.connect();
-                      Navigator.pushReplacementNamed(context, 'usuarios');
+                      Navigator.pushReplacementNamed(context, 'home');
                     } else {
                       mostrarAlerta(context, 'Login incorrecto',
                           'Revise sus credenciales nuevamente');
@@ -96,4 +102,7 @@ class __FormState extends State<_Form> {
       ),
     );
   }
+
+
+
 }

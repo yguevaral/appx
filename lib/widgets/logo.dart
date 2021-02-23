@@ -12,17 +12,18 @@ class Logo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        width: 170.0,
-        margin: EdgeInsets.only(top: 50.0),
+        width: double.maxFinite,
+        margin: EdgeInsets.only(top: 20.0),
         child: Column(
           children: <Widget>[
             Image(
               image: AssetImage('assets/main_logo.jpeg'),
+              width: 180.0,
             ),
             SizedBox(height: 20),
             Text(
               this.titulo,
-              style: TextStyle(fontSize: 30),
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
             )
           ],
         ),

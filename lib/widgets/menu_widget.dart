@@ -1,4 +1,5 @@
 import 'package:appx/global/environment.dart';
+import 'package:appx/helpers/url_navegador.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:flutter/material.dart';
@@ -62,16 +63,7 @@ class MenuWidget extends StatelessWidget {
             title: Text('Servicios'),
             onTap: () {
 
-              FlutterWebBrowser.openWebPage(
-                url: "https://appxguatemala.app/",
-                safariVCOptions: SafariViewControllerOptions(
-                  barCollapsingEnabled: true,
-                  preferredBarTintColor: Colors.green,
-                  preferredControlTintColor: Colors.amber,
-                  dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-                  modalPresentationCapturesStatusBarAppearance: true,
-                ),
-              );
+              showUrlNavegadorInterno('https://appxguatemala.app/');
             },
           ),
 
@@ -79,16 +71,7 @@ class MenuWidget extends StatelessWidget {
             leading: Icon( Icons.pages, color: Environment.colorApp1 ),
             title: Text('Noticias saludables'),
             onTap: (){
-              FlutterWebBrowser.openWebPage(
-                url: "https://appxguatemala.app/",
-                safariVCOptions: SafariViewControllerOptions(
-                  barCollapsingEnabled: true,
-                  preferredBarTintColor: Colors.green,
-                  preferredControlTintColor: Colors.amber,
-                  dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
-                  modalPresentationCapturesStatusBarAppearance: true,
-                ),
-              );
+              showUrlNavegadorInterno('https://appxguatemala.app/');
             },
           ),
 

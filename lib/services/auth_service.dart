@@ -60,10 +60,17 @@ class AuthService with ChangeNotifier {
     }
   }
 
-  Future register(String nombre, String email, String password) async {
+  Future register(String nombre, String email, String password, String sintoma, String  genero, String edad) async {
     this.autenticando = true;
 
-    final data = {'email': email, 'password': password, 'nombre': nombre};
+    final data = {
+      'email': email,
+      'password': password,
+      'nombre': nombre,
+      'sintoma' : sintoma,
+      'genero' : genero,
+      'edad' : edad
+    };
 
     var headers = {'Content-Type': 'application/json'};
     var request =

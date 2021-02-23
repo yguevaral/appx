@@ -34,6 +34,9 @@ class _UsuariosPageState extends State<UsuariosPage> {
     final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
 
+    final argPushNoti = ModalRoute.of(context).settings.arguments;
+
+    print('================ argumentos: ${argPushNoti} ===============');
     // usuario.nombre
 
     return Scaffold(

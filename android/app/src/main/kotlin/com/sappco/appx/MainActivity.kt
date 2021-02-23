@@ -1,4 +1,4 @@
-package com.example.appx
+package com.sappco.appx
 
 import io.flutter.embedding.android.FlutterActivity
 

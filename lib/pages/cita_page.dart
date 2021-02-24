@@ -59,8 +59,6 @@ class _CitaPageState extends State<CitaPage> {
             )
           ],
         ),
-
-        // drawer: MenuWidget(),
         body: SafeArea(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),

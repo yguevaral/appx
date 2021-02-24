@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:appx/services/usuarios_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class PushNotificationsProvider {
@@ -32,6 +33,8 @@ class PushNotificationsProvider {
 
     print('====== FCM token ==========');
     print(token);
+    final usuarioService = new UsuariosService();
+    usuarioService.setUsuarioTokenApp(token);
 
     _firebaseMessaging.configure(
       onMessage: onMessage,

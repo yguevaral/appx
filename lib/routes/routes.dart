@@ -1,5 +1,7 @@
 import 'package:appx/pages/chat_page.dart';
 import 'package:appx/pages/cita_page.dart';
+import 'package:appx/pages/citas_paciente.dart';
+import 'package:appx/pages/espera_cita.dart';
 import 'package:appx/pages/home_page.dart';
 import 'package:appx/pages/loading_page.dart';
 import 'package:appx/pages/login_page.dart';
@@ -15,5 +17,7 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'loading' : (_) => LoadingPage(),
   'home' : (_) => HomePage(),
   'cita' : (_) => CitaPage(),
+  'citasPaciente' : (_) => CitasPacientePage(),
+  'esperarCita' : (_) => EsperarCitaPage(),
 
 };

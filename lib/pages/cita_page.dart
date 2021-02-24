@@ -115,9 +115,8 @@ class _CitaPageState extends State<CitaPage> {
                                           await citaService.crearCita(
                                               sintomasCtrl.text.trim(), 'C');
                                       if (crearCitaOK) {
-
-                                        mostrarAlerta(context, 'Listo',
-                                            'Pronto un medico se contactara contigo');
+                                        Navigator.pushReplacementNamed(
+                                            context, 'esperarCita');
                                       } else {
                                         mostrarAlerta(context, 'Error',
                                             'Chat no disponible');

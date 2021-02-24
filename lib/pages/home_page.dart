@@ -1,8 +1,10 @@
 import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';
+import 'package:appx/models/citas_response.dart';
 import 'package:appx/models/usuario.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/chat_service.dart';
+import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:appx/widgets/header_drawer.dart';
@@ -174,18 +176,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _drawChatPage(BuildContext context) {
+  _drawChatPage(BuildContext context) async {
     final authService = Provider.of<AuthService>(context, listen: false);
     final usuario = authService.usuario;
 
     if (usuario.tipo == 'P') {
-      Navigator.pushNamed(context, 'cita');
-    }
-    else {
+      final citasService = Provider.of<CitaService>(context, listen: false);
+
+      List<Cita> citas = await citasService.getCitasPaciente('C');
+
+      if (citas.length > 0) {
+        Navigator.pushNamed(context, 'citasPaciente', arguments: citas);
+      }
+      else{
+        Navigator.pushNamed(context, 'cita');
+      }
+
+    } else {
       mostrarAlerta(context, 'Chats', 'Mostrar chats activos del medico');
-
     }
-
   }
 
   _drawVideoLlamada(BuildContext context) {

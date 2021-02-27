@@ -35,6 +35,9 @@ dependencies:
   socket_io_client: ^0.9.12
   flutter_web_browser: ^0.13.1
   firebase_messaging: ^7.0.3
+  agora_rtc_engine: ^3.2.1
+  permission_handler: ^5.1.0+2
+  fluttertoast: ^7.1.8
 
 dev_dependencies:
   flutter_test:

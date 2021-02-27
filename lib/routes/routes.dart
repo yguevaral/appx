@@ -9,6 +9,7 @@ import 'package:appx/pages/loading_page.dart';
 import 'package:appx/pages/login_page.dart';
 import 'package:appx/pages/register_page.dart';
 import 'package:appx/pages/usuarios_page.dart';
+import 'package:appx/pages/vcita_page.dart';
 import 'package:flutter/cupertino.dart';
 
 final Map<String, Widget Function(BuildContext)> appRoutes = {
@@ -23,5 +24,6 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'esperarCita' : (_) => EsperarCitaPage(),
   'citaPreguntaMedico' : (_) => CitaPreguntaMedicoPage(),
   'citasMedico' : (_) => CitasMedicoPage(),
+  'videocita' : (_) => VideoCitaPage(),
 
 };

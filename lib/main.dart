@@ -7,6 +7,7 @@ import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/push_notifications_provider.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
@@ -37,11 +38,20 @@ class _MyAppState extends State<MyApp> {
       // print("============================================");
 
       if (data1['accion'] == "chatAceptadoMedico") {
-        navigatorKey.currentState.pushNamed('citasPaciente');
+        navigatorKey.currentState.pushReplacementNamed('citasPaciente');
       }
 
       if (data1['accion'] == "notiCitaMedico") {
-        navigatorKey.currentState.pushNamed('citasMedico');
+        //navigatorKey.currentState.pushNamed('citasMedico');
+        Fluttertoast.showToast(
+          msg: "Nueva Cita por Aceptar",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[300],
+          textColor: Colors.black,
+          fontSize: 16.0
+        );
       }
       // Navigator.pushNamed(context, 'usuarios');
       //navigatorKey.currentState.pushNamed('usuarios', arguments: data);

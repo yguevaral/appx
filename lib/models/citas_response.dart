@@ -43,7 +43,7 @@ class Cita {
     dynamic usuarioMedico;
     String tipo;
     String id;
-    UsuarioPaciente usuarioPaciente;
+    String usuarioPaciente;
     String sintomas;
     String estado;
     DateTime createdAt;
@@ -53,7 +53,7 @@ class Cita {
         usuarioMedico: json["usuario_medico"],
         tipo: json["tipo"],
         id: json["_id"],
-        usuarioPaciente: usuarioPacienteValues.map[json["usuario_paciente"]],
+        usuarioPaciente: json["usuario_paciente"],
         sintomas: json["sintomas"],
         estado: json["estado"],
         createdAt: DateTime.parse(json["createdAt"]),

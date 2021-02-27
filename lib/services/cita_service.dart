@@ -29,29 +29,40 @@ class CitaService with ChangeNotifier {
   Future<bool> crearCita(String sitomas, String tipo) async {
     this.autenticando = true;
 
-    final data = {'sintomas': sitomas, 'tipo': tipo};
+    try {
+      final data = {'sintomas': sitomas, 'tipo': tipo};
 
-    var headers = {
-      'Content-Type': 'application/json',
-      'x-token': await AuthService.getToken()
-    };
+      var headers = {
+        'Content-Type': 'application/json',
+        'x-token': await AuthService.getToken()
+      };
 
-    var request = http.Request('POST', Uri.parse('${Environment.apiUrl}/cita'));
-    request.body = jsonEncode(data);
-    request.headers.addAll(headers);
+      var request =
+          http.Request('POST', Uri.parse('${Environment.apiUrl}/cita'));
+      request.body = jsonEncode(data);
+      request.headers.addAll(headers);
 
-    http.StreamedResponse response = await request.send();
+      http.StreamedResponse response = await request.send();
 
-    this.autenticando = false;
+      this.autenticando = false;
 
-    if (response.statusCode == 200) {
-      final citaResponse =
-          citasResponseFromJson(await response.stream.bytesToString());
+      // print('!!!!!!!!!!!!!!!!!!!!!!!!!!1');
+      // print(response.statusCode);
+      if (response.statusCode == 200) {
+        // var str = await response.stream.bytesToString();
+        // print(str);
+        // final citaResponse = citasResponseFromJson(str);
 
-      this.cita = citaResponse.citas as Cita;
+        // this.cita = citaResponse.citas as Cita;
 
-      return true;
-    } else {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      // print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+      print(e);
+      // print('eeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
       return false;
     }
   }
@@ -80,8 +91,7 @@ class CitaService with ChangeNotifier {
   }
 
   Future<bool> setAceptaMedicoCita(String citaId) async {
-    final resp = await http.get(
-        '${Environment.apiUrl}/cita/medico/$citaId',
+    final resp = await http.get('${Environment.apiUrl}/cita/medico/$citaId',
         headers: {
           'Content-Type': 'application/json',
           'x-token': await AuthService.getToken()

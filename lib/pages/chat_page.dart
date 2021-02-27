@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/models/mensajes_response.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/chat_service.dart';
@@ -77,30 +78,35 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final usuarioPara = chatService.usuarioPara;
 
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Column(
+        leading: Container(
+          padding: EdgeInsets.all(10.0),
+          child: CircleAvatar(
+            child: Text(usuarioPara.nombre.substring(0, 2),
+                style: TextStyle(fontSize: 12)),
+            backgroundColor: Colors.blue[100],
+            // maxRadius: 8
+          ),
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            CircleAvatar(
-              child: Text(usuarioPara.nombre.substring(0, 2),
-                  style: TextStyle(fontSize: 12)),
-              backgroundColor: Colors.blue[100],
-              maxRadius: 14,
-            ),
-            SizedBox(height: 3.0),
             Text(
               usuarioPara.nombre,
-              style: TextStyle(color: Colors.black87, fontSize: 12),
+              style: TextStyle(color: Colors.black87, fontSize: 16),
             )
           ],
         ),
-        centerTitle: true,
-        elevation: 1,
+        centerTitle: false,
+        elevation: 0,
       ),
       body: Container(
         child: Column(
           children: <Widget>[
+            _btnFinalizarCita(usuarioPara.tipo),
             Flexible(
               child: ListView.builder(
                 physics: BouncingScrollPhysics(),
@@ -212,5 +218,19 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     this.socketService.socket.off('mensaje-personal');
     super.dispose();
+  }
+
+  _finalizarCita() {}
+
+  Widget _btnFinalizarCita(strTipo) {
+    if (strTipo == "P") {
+      return FlatButton(
+          minWidth: double.infinity,
+          child: Text('Finalizar Cita', style: TextStyle(color: Colors.white)),
+          color: Colors.red,
+          onPressed: () => _finalizarCita());
+    } else {
+      return Container();
+    }
   }
 }

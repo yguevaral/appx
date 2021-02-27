@@ -111,7 +111,14 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
           : () {
               final chatService =
                   Provider.of<ChatService>(context, listen: false);
-              chatService.usuarioPara = cita.usuarioMedico;
+              var usuario = Usuario();
+              usuario.online = false;
+              usuario.tipo = 'M';
+              usuario.nombre = 'Medico';
+              usuario.email = '';
+              usuario.uid = cita.usuarioMedico;
+              chatService.usuarioPara = usuario;
+
               Navigator.pushNamed(context, 'chat');
             },
     );

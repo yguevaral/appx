@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:appx/global/environment.dart';
 import 'package:appx/models/cita_response.dart';
+import 'package:appx/models/citas_medico_response.dart';
 // import 'package:appx/models/cita.dart';
 import 'package:appx/models/citas_response.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,8 +36,7 @@ class CitaService with ChangeNotifier {
       'x-token': await AuthService.getToken()
     };
 
-    var request =
-        http.Request('POST', Uri.parse('${Environment.apiUrl}/cita'));
+    var request = http.Request('POST', Uri.parse('${Environment.apiUrl}/cita'));
     request.body = jsonEncode(data);
     request.headers.addAll(headers);
 
@@ -57,13 +57,37 @@ class CitaService with ChangeNotifier {
   }
 
   Future<List<Cita>> getCitasPaciente(String tipo) async {
-    final resp = await http.get('${Environment.apiUrl}/cita/$tipo',
+    final resp = await http.get('${Environment.apiUrl}/cita/$tipo', headers: {
+      'Content-Type': 'application/json',
+      'x-token': await AuthService.getToken()
+    });
+    final citasResp = citasResponseFromJson(resp.body);
+
+    return citasResp.citas;
+  }
+
+  Future<List<MedicoCita>> getCitasMedico(String tipo, String estado) async {
+    final resp = await http.get(
+        '${Environment.apiUrl}/cita/medicocitasolicitud/$tipo/$estado',
         headers: {
           'Content-Type': 'application/json',
           'x-token': await AuthService.getToken()
         });
-    final citasResp = citasResponseFromJson(resp.body);
+    //print(resp.body);
+    final citasResp = medicoCitasResponseFromJson(resp.body);
 
-    return citasResp.citas;
+    return citasResp.medicoCitas;
+  }
+
+  Future<bool> setAceptaMedicoCita(String citaId) async {
+    final resp = await http.get(
+        '${Environment.apiUrl}/cita/medico/$citaId',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': await AuthService.getToken()
+        });
+    var arrbody = jsonDecode(resp.body);
+
+    return arrbody['ok'] ? true : false;
   }
 }

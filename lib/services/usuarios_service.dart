@@ -55,4 +55,19 @@ class UsuariosService {
       return false;
     }
   }
+
+  Future<bool> setEnlinea(bool enlinea) async {
+    final token = await this._storage.read(key: 'token');
+
+    String strEnlinea = enlinea ? "Y" : "N";
+
+    final resp = await http.get('${Environment.apiUrl}/usuarios/enlinea/$strEnlinea',
+        headers: {'x-token': token});
+
+    if (resp.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

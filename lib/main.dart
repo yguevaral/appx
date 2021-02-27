@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:appx/routes/routes.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/chat_service.dart';
@@ -26,9 +28,23 @@ class _MyAppState extends State<MyApp> {
     pushProvider.initNotifications();
 
     pushProvider.mensajesStream.listen((data) {
-      print("Argumento desde main: $data");
+      var data1 = jsonDecode(data);
+      // print("============================================");
+      // print("============================================");
+      print("MAIN!!!->>>>>: ");
+      print(data1);
+      // print("============================================");
+      // print("============================================");
+
+      if (data1['accion'] == "chatAceptadoMedico") {
+        navigatorKey.currentState.pushNamed('citasPaciente');
+      }
+
+      if (data1['accion'] == "notiCitaMedico") {
+        navigatorKey.currentState.pushNamed('citasMedico');
+      }
       // Navigator.pushNamed(context, 'usuarios');
-      navigatorKey.currentState.pushNamed('usuarios', arguments: data);
+      //navigatorKey.currentState.pushNamed('usuarios', arguments: data);
     });
   }
 

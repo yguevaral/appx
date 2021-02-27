@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
     final authService = Provider.of<AuthService>(context);
     final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
-    // _enlinea = usuario.online;
+
     // usuario.nombre
 
     return Scaffold(
@@ -67,23 +67,7 @@ class _HomePageState extends State<HomePage> {
                         fontWeight: FontWeight.bold,
                         color: Colors.grey)),
                 SizedBox(height: 10.0),
-                SwitchListTile(
-                  value: _enlinea,
-                  activeColor: Colors.green,
-                  inactiveThumbColor: Colors.red,
-                  title: Text(
-                    _enlinea ? "En linea" : "Fuera de linea",
-                    style: TextStyle(
-                        color: _enlinea ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  controlAffinity: ListTileControlAffinity.trailing,
-                  onChanged: (value) {
-                    setState(() {
-                      _enlinea = value;
-                    });
-                  },
-                ),
+                _showEnLineaMedico(authService.usuario.tipo),
                 SizedBox(height: 10.0),
                 Table(
                   children: [
@@ -187,13 +171,11 @@ class _HomePageState extends State<HomePage> {
 
       if (citas.length > 0) {
         Navigator.pushNamed(context, 'citasPaciente', arguments: citas);
-      }
-      else{
+      } else {
         Navigator.pushNamed(context, 'cita');
       }
-
     } else {
-      mostrarAlerta(context, 'Chats', 'Mostrar chats activos del medico');
+      Navigator.pushNamed(context, 'citasMedico');
     }
   }
 
@@ -209,5 +191,32 @@ class _HomePageState extends State<HomePage> {
 
   _drawHistorial(BuildContext context) {
     Navigator.pushNamed(context, 'usuarios');
+  }
+
+  _showEnLineaMedico(String tipo) {
+    if (tipo == "M") {
+      return SwitchListTile(
+        value: _enlinea,
+        activeColor: Colors.green,
+        inactiveThumbColor: Colors.red,
+        title: Text(
+          _enlinea ? "En linea" : "Fuera de linea",
+          style: TextStyle(
+              color: _enlinea ? Colors.green : Colors.red,
+              fontWeight: FontWeight.bold),
+        ),
+        controlAffinity: ListTileControlAffinity.trailing,
+        onChanged: (value) {
+          setState(() {
+            _enlinea = value;
+            usuarioService.setEnlinea(_enlinea);
+          });
+        },
+      );
+    } else {
+      return Container(
+        height: 30.0,
+      );
+    }
   }
 }

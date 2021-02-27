@@ -1,5 +1,7 @@
 import 'package:appx/pages/chat_page.dart';
 import 'package:appx/pages/cita_page.dart';
+import 'package:appx/pages/cita_pregunta_medico_page.dart';
+import 'package:appx/pages/citas_medico.dart';
 import 'package:appx/pages/citas_paciente.dart';
 import 'package:appx/pages/espera_cita.dart';
 import 'package:appx/pages/home_page.dart';
@@ -19,5 +21,7 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'cita' : (_) => CitaPage(),
   'citasPaciente' : (_) => CitasPacientePage(),
   'esperarCita' : (_) => EsperarCitaPage(),
+  'citaPreguntaMedico' : (_) => CitaPreguntaMedicoPage(),
+  'citasMedico' : (_) => CitasMedicoPage(),
 
 };

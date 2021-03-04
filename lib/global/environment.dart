@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 class Environment {
@@ -7,11 +5,11 @@ class Environment {
   static bool appLocalHost = false;
 
   static String apiUrl = appLocalHost
-      ? 'http://localhost:3000/api'
+      ? 'http://192.168.1.106:3000/api'
       : 'https://appx-server.herokuapp.com/api';
 
   static String socketUrl = appLocalHost
-      ? 'http://localhost:3000/'
+      ? 'http://192.168.1.106:3000/'
       : 'https://appx-server.herokuapp.com';
 
   static Color colorApp1 = Color.fromRGBO(57, 129, 189, 1.0);

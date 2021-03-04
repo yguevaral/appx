@@ -2,32 +2,27 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/models/citas_response.dart';
-import 'package:appx/models/usuario.dart';
-import 'package:appx/services/auth_service.dart';
-import 'package:appx/services/chat_service.dart';
+import 'package:appx/pages/call.dart';
 import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/widgets/header_drawer.dart';
 import 'package:appx/widgets/menu_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import 'call.dart';
-
-class CitasPacientePage extends StatefulWidget {
+class VCitasPacientePage extends StatefulWidget {
   @override
-  _CitasPacientePageState createState() => _CitasPacientePageState();
+  _VCitasPacientePageState createState() => _VCitasPacientePageState();
 }
 
-class _CitasPacientePageState extends State<CitasPacientePage> {
+class _VCitasPacientePageState extends State<VCitasPacientePage> {
   final citaService = new CitaService();
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   List<Cita> citas = [];
-  String tipoCitaHome;
 
   @override
   void initState() {
@@ -37,14 +32,13 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
+    // final authService = Provider.of<AuthService>(context);
     // final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
 
-    // this.tipoCitaHome = authService.getTipoCitaHombre().toString();
     // final argCitas = ModalRoute.of(context).settings.arguments;
 
-    // print('================ ${authService.getTipoCitaHombre()} ===============');
+    // print('================ argumentos: ${argCitas} ===============');
     // usuario.nombre
 
     return Scaffold(
@@ -65,7 +59,6 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
       body: SmartRefresher(
         controller: _refreshController,
         enablePullDown: true,
-        enablePullUp: true,
         physics: BouncingScrollPhysics(),
         onRefresh: _cargarCitas,
         // header: WaterDropHeader(
@@ -78,73 +71,50 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
           child: Icon(Icons.add),
           onPressed: () {
             if (this.citas.length > 5) {
-              mostrarAlerta(context, 'Alerta', 'Solo puedes tener 5 citas en proceso');
+              mostrarAlerta(
+                  context, 'Alerta', 'Solo puedes tener 5 citas en proceso');
             } else {
-              authService.tipoCitaHome = this.tipoCitaHome;
-              Navigator.pushNamed(context, 'cita');
+              Navigator.pushNamed(context, 'videocita');
             }
           }),
     );
   }
 
   ListView _listViewCitas() {
-    if (citas.length > 0) {
-      return ListView.separated(
-        physics: BouncingScrollPhysics(),
-        itemBuilder: (_, i) => _usuarioListTitle(citas[i], i),
-        separatorBuilder: (_, i) => Divider(),
-        itemCount: citas.length,
-      );
-    } else {
-      return ListView(
-        children: <Widget>[
-          SizedBox(height: 100),
-          Center(
-            child: Text('No tienes Citas en Proceso'),
-          )
-        ],
-      );
-    }
+    return ListView.separated(
+      physics: BouncingScrollPhysics(),
+      itemBuilder: (_, i) => _usuarioListTitle(citas[i], i),
+      separatorBuilder: (_, i) => Divider(),
+      itemCount: citas.length,
+    );
   }
 
   ListTile _usuarioListTitle(Cita cita, int index) {
     index++;
     return ListTile(
       title: Text(cita.sintomas),
-      subtitle: Text(Environment.convertToAgo(DateTime.parse(cita.createdAt.toString()))),
+      subtitle: Text(
+          Environment.convertToAgo(DateTime.parse(cita.createdAt.toString()))),
       leading: CircleAvatar(
         child: Text(index.toString()),
       ),
       trailing: Container(
         width: 10.0,
         height: 10.0,
-        decoration:
-            BoxDecoration(color: cita.estado == "SP" ? Colors.grey : Colors.green, borderRadius: BorderRadius.circular(100.0)),
+        decoration: BoxDecoration(
+            color: cita.estado == "SP" ? Colors.grey : Colors.green,
+            borderRadius: BorderRadius.circular(100.0)),
       ),
       onTap: cita.estado == "SP"
           ? null
           : () {
-              if (this.tipoCitaHome == "C") {
-                final chatService = Provider.of<ChatService>(context, listen: false);
-                var usuario = Usuario();
-                usuario.online = false;
-                usuario.tipo = 'M';
-                usuario.nombre = 'Medico';
-                usuario.email = '';
-                usuario.uid = cita.usuarioMedico;
-                chatService.usuarioPara = usuario;
-
-                Navigator.pushNamed(context, 'chat');
-              } else {
-                onJoin(cita.id);
-              }
+              onJoin(cita.id.toString());
             },
     );
   }
 
   _cargarCitas() async {
-    this.tipoCitaHome = await FlutterSecureStorage().read(key: 'tipoCitaHome');
-    this.citas = await citaService.getCitasPaciente(this.tipoCitaHome);
+    this.citas = await citaService.getCitasPaciente('V');
     setState(() {});
     // await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
@@ -174,4 +144,5 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
     final status = await permission.request();
     print(status);
   }
+
 }

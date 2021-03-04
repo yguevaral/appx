@@ -1,14 +1,14 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/models/mensajes_response.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/chat_service.dart';
+import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/widgets/chat_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
@@ -17,13 +17,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
+  final citaService = new CitaService();
   final _textController = new TextEditingController();
   final _focusNode = new FocusNode();
   bool _estaEscribiendo = false;
+  final GlobalKey<NavigatorState> navigatorKeyChat = new GlobalKey<NavigatorState>();
 
   ChatService chatService;
   SocketService socketService;
   AuthService authService;
+  BuildContext blConte;
 
   List<ChatMessage> _messages = [
     // ChatMessage(uid: '123', texto: 'Hola mundo'),
@@ -37,10 +40,12 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     this.chatService = Provider.of<ChatService>(context, listen: false);
     this.socketService = Provider.of<SocketService>(context, listen: false);
     this.authService = Provider.of<AuthService>(context, listen: false);
+    this.blConte = context;
 
     this.socketService.socket.on('mensaje-personal', _escucharMensaje);
 
     _cargarHistorial(this.chatService.usuarioPara.uid);
+
   }
 
   void _cargarHistorial(String usuarioID) async {
@@ -49,9 +54,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final history = chat.map((m) => new ChatMessage(
           texto: m.mensaje,
           uid: m.de,
-          animationController: new AnimationController(
-              vsync: this, duration: Duration(milliseconds: 300))
-            ..forward(),
+          animationController: new AnimationController(vsync: this, duration: Duration(milliseconds: 300))..forward(),
         ));
 
     setState(() {
@@ -64,20 +67,32 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     ChatMessage message = new ChatMessage(
         texto: payload['mensaje'],
         uid: payload['de'],
-        animationController: AnimationController(
-            vsync: this, duration: Duration(milliseconds: 300)));
+        animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 300)));
 
-    setState(() {
-      _messages.insert(0, message);
-    });
+    if (payload['mensaje'] == "F1n@liz@Ch@t") {
+      // print('POP!!!!!!!!!');
+      // mostrarAlerta(this.blConte, '3', '3');
+      Fluttertoast.showToast(
+          msg: "Chat Finalizado",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 5,
+          backgroundColor: Colors.grey[300],
+          textColor: Colors.black,
+          fontSize: 16.0);
+      Navigator.pushReplacementNamed(this.blConte, 'home');
+    } else {
+      setState(() {
+        _messages.insert(0, message);
+      });
 
-    message.animationController.forward();
+      message.animationController.forward();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final usuarioPara = chatService.usuarioPara;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -85,8 +100,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
         leading: Container(
           padding: EdgeInsets.all(10.0),
           child: CircleAvatar(
-            child: Text(usuarioPara.nombre.substring(0, 2),
-                style: TextStyle(fontSize: 12)),
+            child: Text(usuarioPara.nombre.substring(0, 2), style: TextStyle(fontSize: 12)),
             backgroundColor: Colors.blue[100],
             // maxRadius: 8
           ),
@@ -106,7 +120,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
       body: Container(
         child: Column(
           children: <Widget>[
-            _btnFinalizarCita(usuarioPara.tipo),
+            _btnFinalizarCita(usuarioPara.tipo, context),
             Flexible(
               child: ListView.builder(
                 physics: BouncingScrollPhysics(),
@@ -146,8 +160,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                     }
                   });
                 },
-                decoration:
-                    InputDecoration.collapsed(hintText: 'Enviar Mensaje'),
+                decoration: InputDecoration.collapsed(hintText: 'Enviar Mensaje'),
                 focusNode: _focusNode,
               ),
             ),
@@ -156,9 +169,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
               child: Platform.isIOS
                   ? CupertinoButton(
                       child: Text('Enviar'),
-                      onPressed: _estaEscribiendo
-                          ? () => _handleSubmit(_textController.text.trim())
-                          : null,
+                      onPressed: _estaEscribiendo ? () => _handleSubmit(_textController.text.trim()) : null,
                     )
                   : Container(
                       margin: EdgeInsets.symmetric(horizontal: 4.0),
@@ -168,9 +179,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
                           icon: Icon(Icons.send),
-                          onPressed: _estaEscribiendo
-                              ? () => _handleSubmit(_textController.text.trim())
-                              : null,
+                          onPressed: _estaEscribiendo ? () => _handleSubmit(_textController.text.trim()) : null,
                         ),
                       ),
                     ),
@@ -190,8 +199,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     final newMessage = new ChatMessage(
       uid: authService.usuario.uid,
       texto: texto,
-      animationController: AnimationController(
-          vsync: this, duration: Duration(milliseconds: 200)),
+      animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 200)),
     );
     _messages.insert(0, newMessage);
     newMessage.animationController.forward();
@@ -201,11 +209,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     });
 
     //emitir mensaje
-    this.socketService.emit('mensaje-personal', {
-      'de': this.authService.usuario.uid,
-      'para': this.chatService.usuarioPara.uid,
-      'mensaje': texto
-    });
+    this.socketService.emit(
+        'mensaje-personal', {'de': this.authService.usuario.uid, 'para': this.chatService.usuarioPara.uid, 'mensaje': texto});
   }
 
   @override
@@ -220,15 +225,22 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  _finalizarCita() {}
-
-  Widget _btnFinalizarCita(strTipo) {
+  Widget _btnFinalizarCita(strTipo, context) {
     if (strTipo == "P") {
       return FlatButton(
           minWidth: double.infinity,
           child: Text('Finalizar Cita', style: TextStyle(color: Colors.white)),
           color: Colors.red,
-          onPressed: () => _finalizarCita());
+          onPressed: () async {
+            bool okFinalizaCita = await citaService.setFinalizaMedicoCita(chatService.idCita);
+            if (okFinalizaCita) {
+              this.socketService.emit('mensaje-personal',
+                  {'de': this.authService.usuario.uid, 'para': this.chatService.usuarioPara.uid, 'mensaje': 'F1n@liz@Ch@t'});
+              Navigator.pushReplacementNamed(context, 'citasMedico');
+            } else {
+              print('Error!!');
+            }
+          });
     } else {
       return Container();
     }

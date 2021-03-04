@@ -1,13 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:appx/models/usuario.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'chat_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PushNotificationsProvider {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
@@ -19,25 +16,42 @@ class PushNotificationsProvider {
 
   static Future<dynamic> onBackgroundMessage(
       Map<String, dynamic> message) async {
-    if (message.containsKey('data')) {
-      // Handle data message
-      // final dynamic data = message['data'];
-      // accionesNotificacion('onMessage', message);
-      // final GlobalKey<NavigatorState> navigatorKey =
-      //     new GlobalKey<NavigatorState>();
-      // // message['data']['evento'] = 'onBackgroundMessage';
-      // navigatorKey.currentState
-      //     .pushNamed('citaPreguntaMedico', arguments: message);
-    }
+    // if (message.containsKey('data')) {
+    //   // Handle data message
+    //   // final dynamic data = message['data'];
+    //   // accionesNotificacion('onMessage', message);
+    //   final GlobalKey<NavigatorState> navigatorKey =
+    //       new GlobalKey<NavigatorState>();
+    //   // message['data']['evento'] = 'onBackgroundMessage';
+    //   navigatorKey.currentState.pushNamed('register', arguments: message);
+    // }
 
-    if (message.containsKey('notification')) {
-      // Handle notification message
-      final dynamic notification = message['notification'];
-    }
+    // if (message.containsKey('notification')) {
+    //   // Handle notification message
+    //   final dynamic notification = message['notification'];
+    // }
+    Fluttertoast.showToast(
+          msg: "onBackgroundMessage!!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[300],
+          textColor: Colors.black,
+          fontSize: 16.0
+        );
+    // print("Onback!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    // final _storage = new FlutterSecureStorage();
 
-    // message['evento'] = 'onLaunch';
-    // _mensajesStreamController.sink.add(jsonEncode(message['data']));
-    // Or do other work.
+    // await _storage.write(key: 'notiBack', value: "Sii");
+    // // final GlobalKey<NavigatorState> navigatorKey =
+    // //       new GlobalKey<NavigatorState>();
+    // //   // message['data']['evento'] = 'onBackgroundMessage';
+    // //   navigatorKey.currentState
+    // //       .pushNamed('register', arguments: message);
+
+    // // message['evento'] = 'onLaunch';
+    // // _mensajesStreamController.sink.add(jsonEncode(message['data']));
+    // // Or do other work.
   }
 
   initNotifications() async {
@@ -54,7 +68,7 @@ class PushNotificationsProvider {
 
     _firebaseMessaging.configure(
       onMessage: onMessage,
-      onBackgroundMessage: onBackgroundMessage,
+      onBackgroundMessage: PushNotificationsProvider.onBackgroundMessage,
       onLaunch: onLaunch,
       onResume: onResume,
     );

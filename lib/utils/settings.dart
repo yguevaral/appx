@@ -1,3 +1,2 @@
-/// Define App ID and Token
-const APP_ID = "c0c10f367dd04c819408e6b618b15268";
-const Token = "006c0c10f367dd04c819408e6b618b15268IADVl4FFIjN1eZeaV2WqphbiiOhGHibRF3XxMwjQ5o7HLuiShusAAAAAEAAdwi3R0EE7YAEAAQDQQTtg";
+/// Define App ID and Token Agora
+const APP_ID = "b570246d255d449aa05dcbdab4f2e6fe";

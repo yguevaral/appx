@@ -38,7 +38,7 @@ class _MyAppState extends State<MyApp> {
       // print("============================================");
 
       if (data1['accion'] == "chatAceptadoMedico") {
-        navigatorKey.currentState.pushReplacementNamed('citasPaciente');
+        navigatorKey.currentState.pushReplacementNamed('home');
       }
 
       if (data1['accion'] == "notiCitaMedico") {

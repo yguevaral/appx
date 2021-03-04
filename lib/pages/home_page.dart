@@ -1,18 +1,16 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';
-import 'package:appx/models/citas_response.dart';
-import 'package:appx/models/usuario.dart';
 import 'package:appx/services/auth_service.dart';
-import 'package:appx/services/chat_service.dart';
-import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:appx/widgets/header_drawer.dart';
 import 'package:appx/widgets/menu_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,17 +21,28 @@ class _HomePageState extends State<HomePage> {
   final usuarioService = new UsuariosService();
   bool _enlinea;
   int alertaChat = 0;
+  int alertaVideoChat = 0;
+  int alertaDomicilio = 0;
+  int alertaHistorico = 0;
+  Timer timerAlerta;
 
   @override
   void initState() {
     super.initState();
     _enlinea = true;
+    getAlertas();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timerAlerta.cancel();
   }
 
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    final usuario = authService.usuario;
+    // final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
 
     return Scaffold(
@@ -51,83 +60,50 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         drawer: MenuWidget(),
-        body: FutureBuilder(
+        body:
+            /*FutureBuilder(
             future: getAlertas(context),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              return SafeArea(
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Hola ${authService.usuario.nombre}',
-                          style: TextStyle(
-                              fontSize: 28.0, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 10.0),
-                      Text('Que podemos hacer ti?',
-                          style: TextStyle(
-                              fontSize: 25.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                      SizedBox(height: 10.0),
-                      _showEnLineaMedico(authService.usuario.tipo),
-                      SizedBox(height: 10.0),
-                      Table(
-                        children: [
-                          TableRow(children: [
-                            _crearBotonRedondeado(
-                                'Chat',
-                                'assets/iconChat.png',
-                                _drawChatPage,
-                                context,
-                                Alignment.topLeft,
-                                Alignment.bottomRight,
-                                alertaChat),
-                            _crearBotonRedondeado(
-                                'Videollamada',
-                                'assets/iconVideoLlamada.png',
-                                _drawVideoLlamada,
-                                context,
-                                Alignment.topRight,
-                                Alignment.bottomLeft,
-                                0)
-                          ]),
-                          TableRow(children: [
-                            _crearBotonRedondeado(
-                                'Cita a domicilio',
-                                'assets/iconCita.png',
-                                _drawCita,
-                                context,
-                                Alignment.bottomLeft,
-                                Alignment.topRight,
-                                0),
-                            _crearBotonRedondeado(
-                                'Historial',
-                                'assets/historial_medico.png',
-                                _drawHistorial,
-                                context,
-                                Alignment.bottomRight,
-                                Alignment.topLeft,
-                                0)
-                          ])
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }));
+              return*/
+            SafeArea(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('Hola ${authService.usuario.nombre}', style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10.0),
+                Text('Que podemos hacer ti?', style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold, color: Colors.grey)),
+                SizedBox(height: 10.0),
+                _showEnLineaMedico(authService.usuario.tipo),
+                SizedBox(height: 10.0),
+                Table(
+                  children: [
+                    TableRow(children: [
+                      _crearBotonRedondeado('Chat', 'assets/iconChat.png', _drawChatPage, context, Alignment.topLeft,
+                          Alignment.bottomRight, alertaChat),
+                      _crearBotonRedondeado('Videollamada', 'assets/iconVideoLlamada.png', _drawVideoLlamada, context,
+                          Alignment.topRight, Alignment.bottomLeft, alertaVideoChat)
+                    ]),
+                    TableRow(children: [
+                      _crearBotonRedondeado('Cita a domicilio', 'assets/iconCita.png', _drawCita, context, Alignment.bottomLeft,
+                          Alignment.topRight, alertaDomicilio),
+                      _crearBotonRedondeado('Historial', 'assets/historial_medico.png', _drawHistorial, context,
+                          Alignment.bottomRight, Alignment.topLeft, alertaHistorico)
+                    ])
+                  ],
+                )
+              ],
+            ),
+          ),
+        ) //;
+        //}
+        //)
+        );
   }
 
-  Widget _crearBotonRedondeado(
-      String texto,
-      String strIcon,
-      Function fntOnPresed,
-      context,
-      AlignmentGeometry begin,
-      AlignmentGeometry end,
-      int numeroAlerta) {
+  Widget _crearBotonRedondeado(String texto, String strIcon, Function fntOnPresed, context, AlignmentGeometry begin,
+      AlignmentGeometry end, int numeroAlerta) {
     return GestureDetector(
       child: Container(
         height: 130.0,
@@ -161,9 +137,7 @@ class _HomePageState extends State<HomePage> {
                         image: AssetImage(strIcon),
                         fit: BoxFit.cover,
                       )),
-                  Text(texto,
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  Text(texto, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   SizedBox(height: 15.0)
                 ],
               ),
@@ -179,24 +153,38 @@ class _HomePageState extends State<HomePage> {
     final authService = Provider.of<AuthService>(context, listen: false);
     final usuario = authService.usuario;
 
+    await FlutterSecureStorage().write(key: 'tipoCitaHome', value: "C");
+
     if (usuario.tipo == 'P') {
-      final citasService = Provider.of<CitaService>(context, listen: false);
+      // final citasService = Provider.of<CitaService>(context, listen: false);
 
-      List<Cita> citas = await citasService.getCitasPaciente('C');
+      // List<Cita> citas = await citasService.getCitasPaciente('C');
 
-      if (citas.length > 0) {
-        Navigator.pushNamed(context, 'citasPaciente', arguments: citas);
-      } else {
-        Navigator.pushNamed(context, 'cita');
-      }
+      // if (alertaChat > 0) {
+      // Navigator.pushNamed(context, 'citasPaciente', arguments: citas);
+      Navigator.pushNamed(context, 'citasPaciente');
+      // } else {
+      //   Navigator.pushNamed(context, 'cita');
+      // }
     } else {
       Navigator.pushNamed(context, 'citasMedico');
     }
   }
 
-  _drawVideoLlamada(BuildContext context) {
+  _drawVideoLlamada(BuildContext context) async {
+    final authService = Provider.of<AuthService>(context, listen: false);
+    final usuario = authService.usuario;
+
+    await FlutterSecureStorage().write(key: 'tipoCitaHome', value: "V");
+
     //mostrarAlerta(context, 'Alerta', 'Pronto estara disponible esta opcion');
-    Navigator.pushNamed(context, 'videocita');
+    if (usuario.tipo == 'P') {
+      // Navigator.pushNamed(context, 'vcitasPaciente');
+      Navigator.pushNamed(context, 'citasPaciente');
+    } else {
+      // Navigator.pushNamed(context, 'vcitasMedico');
+      Navigator.pushNamed(context, 'citasMedico');
+    }
   }
 
   _drawCita(BuildContext context) {
@@ -204,8 +192,13 @@ class _HomePageState extends State<HomePage> {
     // Navigator.pushNamed(context, 'usuarios');
   }
 
-  _drawHistorial(BuildContext context) {
-    Navigator.pushNamed(context, 'usuarios');
+  _drawHistorial(BuildContext context) async {
+    final storage = new FlutterSecureStorage();
+
+    final token = await storage.read(key: 'notiBack');
+
+    mostrarAlerta(context, "NotiBack", token.toString());
+    // Navigator.pushNamed(context, 'usuarios');
   }
 
   _showEnLineaMedico(String tipo) {
@@ -216,9 +209,7 @@ class _HomePageState extends State<HomePage> {
         inactiveThumbColor: Colors.red,
         title: Text(
           _enlinea ? "En linea" : "Fuera de linea",
-          style: TextStyle(
-              color: _enlinea ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold),
+          style: TextStyle(color: _enlinea ? Colors.green : Colors.red, fontWeight: FontWeight.bold),
         ),
         controlAffinity: ListTileControlAffinity.trailing,
         onChanged: (value) {
@@ -245,14 +236,10 @@ class _HomePageState extends State<HomePage> {
           children: [
             Container(
               margin: EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10), color: Colors.white),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
               // color: Colors.red,
               padding: const EdgeInsets.all(8.0),
-              child: Text(numeroAlerta.toString(),
-                  style: TextStyle(
-                      color: Environment.colorApp1,
-                      fontWeight: FontWeight.bold)),
+              child: Text(numeroAlerta.toString(), style: TextStyle(color: Environment.colorApp1, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -262,17 +249,21 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  getAlertas(BuildContext context) async {
+  getAlertas() {
+    if (timerAlerta != null) {
+      timerAlerta.cancel();
+    }
 
-    final citasService = Provider.of<CitaService>(context, listen: false);
+    timerAlerta = Timer.periodic(new Duration(seconds: 3), (timer) async {
+      final arrJsonHomeAlerta = jsonDecode(await usuarioService.getHomeAlerta());
+      // print(arrJsonHomeAlerta);
+      alertaChat = arrJsonHomeAlerta['alerta_chat'];
+      alertaVideoChat = arrJsonHomeAlerta['alerta_videollamada'];
+      alertaDomicilio = arrJsonHomeAlerta['alerta_domicilio'];
+      alertaHistorico = arrJsonHomeAlerta['alerta_historial'];
 
-    List<Cita> citas = await citasService.getCitasPaciente('C');
-
-    alertaChat = citas.length;
-
-    setState(() {
-
-        });
-
+      // print('seeett Timer!!!');
+      setState(() {});
+    });
   }
 }

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 class ChatService with ChangeNotifier {
   Usuario usuarioPara;
+  String idCita;
 
   Future<List<Mensaje>> getChat(String usuarioID) async {
     final resp = await http.get('${Environment.apiUrl}/mensajes/$usuarioID',

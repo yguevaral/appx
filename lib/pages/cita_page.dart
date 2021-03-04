@@ -2,17 +2,14 @@ import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/models/usuario.dart';
 import 'package:appx/services/auth_service.dart';
-import 'package:appx/services/chat_service.dart';
 import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:appx/widgets/boton_azul.dart';
 import 'package:appx/widgets/header_drawer.dart';
-import 'package:appx/widgets/menu_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CitaPage extends StatefulWidget {
   @override
@@ -21,12 +18,13 @@ class CitaPage extends StatefulWidget {
 
 class _CitaPageState extends State<CitaPage> {
   final usuarioService = new UsuariosService();
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  // RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
 
   List<Usuario> usuarios = [];
 
   final sintomasCtrl = TextEditingController();
+  String tipoCitaHome;
 
   @override
   void initState() {
@@ -36,9 +34,11 @@ class _CitaPageState extends State<CitaPage> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
-    final usuario = authService.usuario;
+    // final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
     final citaService = Provider.of<CitaService>(context);
+
+    this.tipoCitaHome = authService.getTipoCitaHombre().toString();
 
     return Scaffold(
         appBar: AppBar(
@@ -76,20 +76,14 @@ class _CitaPageState extends State<CitaPage> {
                         children: <Widget>[
                           SizedBox(height: 20),
                           Text(
-                            'Orientación médica por Chat',
-                            style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                color: Environment.colorApp1),
+                            this.tipoCitaHome == 'C' ? 'Orientación médica por Chat' : 'Orientación médica por Video Llamada',
+                            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Environment.colorApp1),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 20),
                           Text(
                             'Para encontrar al médico indicado que atenderá tu orientación médica, cuéntanos más sobre tus síntomas.',
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey),
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 20),
@@ -98,10 +92,9 @@ class _CitaPageState extends State<CitaPage> {
                               controller: sintomasCtrl,
                               autocorrect: false,
                               keyboardType: TextInputType.multiline,
+                              onSubmitted: (value) => FocusScope.of(context).unfocus(),
                               decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
                                   // focusedBorder: InputBorder.none,
                                   hintText: 'Describe tus síntomas:')),
                           SizedBox(height: 20),
@@ -110,16 +103,17 @@ class _CitaPageState extends State<CitaPage> {
                               onPressed: citaService.autenticando
                                   ? null
                                   : () async {
-                                      FocusScope.of(context).unfocus();
-                                      final crearCitaOK =
-                                          await citaService.crearCita(
-                                              sintomasCtrl.text.trim(), 'C');
-                                      if (crearCitaOK) {
-                                        Navigator.pushReplacementNamed(
-                                            context, 'esperarCita');
+                                      if (sintomasCtrl.text.trim().isEmpty) {
+                                        mostrarAlerta(context, 'Alerta', 'Ingresa detalladamente tus sintomas');
                                       } else {
-                                        mostrarAlerta(context, 'Error',
-                                            'Chat no disponible');
+                                        FocusScope.of(context).unfocus();
+                                        final crearCitaOK =
+                                            await citaService.crearCita(sintomasCtrl.text.trim(), this.tipoCitaHome);
+                                        if (crearCitaOK) {
+                                          Navigator.pushReplacementNamed(context, 'esperarCita');
+                                        } else {
+                                          mostrarAlerta(context, 'Error', 'Chat no disponible');
+                                        }
                                       }
                                     }),
                         ],

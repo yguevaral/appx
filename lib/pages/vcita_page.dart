@@ -3,19 +3,15 @@ import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/models/usuario.dart';
 import 'package:appx/pages/call.dart';
-import 'package:appx/services/auth_service.dart';
-import 'package:appx/services/chat_service.dart';
 import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:appx/widgets/boton_azul.dart';
 import 'package:appx/widgets/header_drawer.dart';
-import 'package:appx/widgets/menu_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class VideoCitaPage extends StatefulWidget {
   @override
@@ -24,8 +20,8 @@ class VideoCitaPage extends StatefulWidget {
 
 class _VideoCitaPageState extends State<VideoCitaPage> {
   final usuarioService = new UsuariosService();
-  RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  // RefreshController _refreshController =
+  //     RefreshController(initialRefresh: false);
 
   List<Usuario> usuarios = [];
 
@@ -38,8 +34,8 @@ class _VideoCitaPageState extends State<VideoCitaPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    final usuario = authService.usuario;
+    // final authService = Provider.of<AuthService>(context);
+    // final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
     final citaService = Provider.of<CitaService>(context);
 
@@ -79,7 +75,7 @@ class _VideoCitaPageState extends State<VideoCitaPage> {
                         children: <Widget>[
                           SizedBox(height: 20),
                           Text(
-                            'Orientación médica por Chat',
+                            'Orientación médica por Video Llamadas',
                             style: TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.bold,
@@ -109,22 +105,23 @@ class _VideoCitaPageState extends State<VideoCitaPage> {
                                   hintText: 'Describe tus síntomas:')),
                           SizedBox(height: 20),
                           BotonAzul(
-                              text: 'Iniciar Chat', onPressed: _fntPageCall)
-                          // onPressed: citaService.autenticando
-                          //     ? null
-                          //     : () async {
-                          //         FocusScope.of(context).unfocus();
-                          //         final crearCitaOK =
-                          //             await citaService.crearCita(
-                          //                 sintomasCtrl.text.trim(), 'C');
-                          //         if (crearCitaOK) {
-                          //           Navigator.pushReplacementNamed(
-                          //               context, 'esperarCita');
-                          //         } else {
-                          //           mostrarAlerta(context, 'Error',
-                          //               'Chat no disponible');
-                          //         }
-                          //       }),
+                              text: 'Iniciar Chat',
+                              // onPressed: _fntPageCall)
+                          onPressed: citaService.autenticando
+                              ? null
+                              : () async {
+                                  FocusScope.of(context).unfocus();
+                                  final crearCitaOK =
+                                      await citaService.crearCita(
+                                          sintomasCtrl.text.trim(), 'V');
+                                  if (crearCitaOK) {
+                                    Navigator.pushReplacementNamed(
+                                        context, 'vcitasPaciente');
+                                  } else {
+                                    mostrarAlerta(context, 'Error',
+                                        'Chat no disponible');
+                                  }
+                                }),
                         ],
                       ),
                     ),
@@ -134,10 +131,6 @@ class _VideoCitaPageState extends State<VideoCitaPage> {
             ),
           ),
         ));
-  }
-
-  _fntPageCall() {
-    onJoin();
   }
 
   Future<void> onJoin() async {
@@ -163,4 +156,5 @@ class _VideoCitaPageState extends State<VideoCitaPage> {
     final status = await permission.request();
     print(status);
   }
+
 }

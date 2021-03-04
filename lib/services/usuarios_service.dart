@@ -70,4 +70,18 @@ class UsuariosService {
       return false;
     }
   }
+
+  Future getHomeAlerta() async {
+    final token = await this._storage.read(key: 'token');
+
+    final resp = await http.get('${Environment.apiUrl}/usuarios/homeAlerta',
+        headers: {'x-token': token});
+
+    if (resp.statusCode == 200) {
+      return resp.body;
+    } else {
+      return false;
+    }
+  }
+
 }

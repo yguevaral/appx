@@ -1,6 +1,5 @@
 import 'package:appx/global/environment.dart';
 import 'package:appx/models/usuario.dart';
-import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/chat_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
@@ -30,14 +29,14 @@ class _UsuariosPageState extends State<UsuariosPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authService = Provider.of<AuthService>(context);
-    final usuario = authService.usuario;
+    // final authService = Provider.of<AuthService>(context);
+    // final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
 
-    final argPushNoti = ModalRoute.of(context).settings.arguments;
+    // final argPushNoti = ModalRoute.of(context).settings.arguments;
 
-    print('================ argumentos: ${argPushNoti} ===============');
-    // usuario.nombre
+    // print('================ argumentos: ${argPushNoti} ===============');
+    // // usuario.nombre
 
     return Scaffold(
         appBar: AppBar(

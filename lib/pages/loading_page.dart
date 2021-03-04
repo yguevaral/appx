@@ -1,7 +1,6 @@
 import 'package:appx/global/environment.dart';
 import 'package:appx/pages/home_page.dart';
 import 'package:appx/pages/login_page.dart';
-import 'package:appx/pages/usuarios_page.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:flutter/material.dart';

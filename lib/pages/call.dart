@@ -57,11 +57,13 @@ class _CallPageState extends State<CallPage> {
 
     await _initAgoraRtcEngine();
     _addAgoraEventHandlers();
+    // ignore: deprecated_member_use
     await _engine.enableWebSdkInteroperability(true);
     VideoEncoderConfiguration configuration = VideoEncoderConfiguration();
     configuration.dimensions = VideoDimensions(1920, 1080);
     await _engine.setVideoEncoderConfiguration(configuration);
-    await _engine.joinChannel(Token, widget.channelName, null, 0);
+    await _engine.joinChannel(null, widget.channelName, null, 0);
+    // await _engine.joinChannel(null, ChanelTMP, null, 0);
   }
 
   /// Create agora sdk instance and initialize
@@ -291,7 +293,7 @@ class _CallPageState extends State<CallPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Agora Flutter QuickStart'),
+        title: Text('Video LLamada'),
       ),
       backgroundColor: Colors.black,
       body: Center(

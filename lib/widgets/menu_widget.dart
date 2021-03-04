@@ -4,7 +4,6 @@ import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_web_browser/flutter_web_browser.dart';
 
 
 // import 'package:preferenciasusuarioapp/src/pages/home_page.dart';

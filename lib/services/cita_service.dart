@@ -1,13 +1,10 @@
 import 'dart:convert';
 
 import 'package:appx/global/environment.dart';
-import 'package:appx/models/cita_response.dart';
 import 'package:appx/models/citas_medico_response.dart';
-// import 'package:appx/models/cita.dart';
 import 'package:appx/models/citas_response.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'auth_service.dart';
 
@@ -15,8 +12,6 @@ class CitaService with ChangeNotifier {
   Cita cita;
   bool _autenticando = false;
 
-  // Create storage
-  final _storage = new FlutterSecureStorage();
 
   bool get autenticando => this._autenticando;
   set autenticando(bool valor) {
@@ -68,11 +63,14 @@ class CitaService with ChangeNotifier {
   }
 
   Future<List<Cita>> getCitasPaciente(String tipo) async {
+    this.autenticando = true;
+
     final resp = await http.get('${Environment.apiUrl}/cita/$tipo', headers: {
       'Content-Type': 'application/json',
       'x-token': await AuthService.getToken()
     });
     final citasResp = citasResponseFromJson(resp.body);
+    this.autenticando = false;
 
     return citasResp.citas;
   }
@@ -100,4 +98,34 @@ class CitaService with ChangeNotifier {
 
     return arrbody['ok'] ? true : false;
   }
+
+  Future<bool> setRechazaMedicoCita(String citaId) async {
+    this.autenticando = true;
+
+    final resp = await http.get('${Environment.apiUrl}/cita/medicoRechazo/$citaId',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': await AuthService.getToken()
+        });
+    var arrbody = jsonDecode(resp.body);
+    this.autenticando = false;
+
+    return arrbody['ok'] ? true : false;
+  }
+
+  Future<bool> setFinalizaMedicoCita(String citaId) async {
+    this.autenticando = true;
+
+    final resp = await http.get('${Environment.apiUrl}/cita/medicoFinaliza/$citaId',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-token': await AuthService.getToken()
+        });
+    var arrbody = jsonDecode(resp.body);
+    this.autenticando = false;
+
+
+    return arrbody['ok'] ? true : false;
+  }
+
 }

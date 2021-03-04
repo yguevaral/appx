@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';

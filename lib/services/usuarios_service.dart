@@ -13,10 +13,8 @@ class UsuariosService {
 
   Future<List<Usuario>> getUsuarios() async {
     try {
-      final resp = await http.get('${Environment.apiUrl}/usuarios', headers: {
-        'Content-Type': 'application/json',
-        'x-token': await AuthService.getToken()
-      });
+      final resp = await http.get('${Environment.apiUrl}/usuarios',
+          headers: {'Content-Type': 'application/json', 'x-token': await AuthService.getToken()});
 
       final usuariosResponse = usuariosResponseFromJson(resp.body);
       return usuariosResponse.usuarios;
@@ -29,17 +27,10 @@ class UsuariosService {
     try {
       final tokenUsuario = await this._storage.read(key: 'token');
 
-      final data = {
-        'token': tokenApp,
-        'plataforma': Platform.isAndroid ? "A" : "I"
-      };
+      final data = {'token': tokenApp, 'plataforma': Platform.isAndroid ? "A" : "I"};
 
-      var headers = {
-        'Content-Type': 'application/json',
-        'x-token': tokenUsuario
-      };
-      var request = http.Request(
-          'POST', Uri.parse('${Environment.apiUrl}/usuarios/appToken'));
+      var headers = {'Content-Type': 'application/json', 'x-token': tokenUsuario};
+      var request = http.Request('POST', Uri.parse('${Environment.apiUrl}/usuarios/appToken'));
       request.body = jsonEncode(data);
       request.headers.addAll(headers);
 
@@ -47,8 +38,10 @@ class UsuariosService {
       // final strRespuesta = await response.stream.bytesToString();
 
       if (response.statusCode == 200) {
+        print('Token Enviado->>>>');
         return true;
       } else {
+        print('Token EROORRRR!!!!.....Enviado->>>>');
         return false;
       }
     } catch (e) {
@@ -61,8 +54,7 @@ class UsuariosService {
 
     String strEnlinea = enlinea ? "Y" : "N";
 
-    final resp = await http.get('${Environment.apiUrl}/usuarios/enlinea/$strEnlinea',
-        headers: {'x-token': token});
+    final resp = await http.get('${Environment.apiUrl}/usuarios/enlinea/$strEnlinea', headers: {'x-token': token});
 
     if (resp.statusCode == 200) {
       return true;
@@ -74,8 +66,7 @@ class UsuariosService {
   Future getHomeAlerta() async {
     final token = await this._storage.read(key: 'token');
 
-    final resp = await http.get('${Environment.apiUrl}/usuarios/homeAlerta',
-        headers: {'x-token': token});
+    final resp = await http.get('${Environment.apiUrl}/usuarios/homeAlerta', headers: {'x-token': token});
 
     if (resp.statusCode == 200) {
       return resp.body;
@@ -83,5 +74,4 @@ class UsuariosService {
       return false;
     }
   }
-
 }

@@ -6,17 +6,18 @@ import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:appx/widgets/boton_azul.dart';
+import 'package:appx/widgets/custom_input.dart';
 import 'package:appx/widgets/header_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CitaPage extends StatefulWidget {
+class CitaPagoPage extends StatefulWidget {
   @override
-  _CitaPageState createState() => _CitaPageState();
+  _CitaPagoPageState createState() => _CitaPagoPageState();
 }
 
-class _CitaPageState extends State<CitaPage> {
+class _CitaPagoPageState extends State<CitaPagoPage> {
   final usuarioService = new UsuariosService();
   // RefreshController _refreshController =
   //     RefreshController(initialRefresh: false);
@@ -24,6 +25,8 @@ class _CitaPageState extends State<CitaPage> {
   List<Usuario> usuarios = [];
 
   final sintomasCtrl = TextEditingController();
+  final creCtrl = TextEditingController();
+
   String tipoCitaHome;
 
   @override
@@ -39,6 +42,10 @@ class _CitaPageState extends State<CitaPage> {
     final citaService = Provider.of<CitaService>(context);
 
     this.tipoCitaHome = authService.getTipoCitaHombre().toString();
+
+    final strSintomas = ModalRoute.of(context).settings.arguments;
+
+    print('================ Sintormas: ${strSintomas}, ${this.tipoCitaHome} ===============');
 
     return Scaffold(
         appBar: AppBar(
@@ -59,6 +66,7 @@ class _CitaPageState extends State<CitaPage> {
             )
           ],
         ),
+        backgroundColor: Colors.grey[200],
         body: SafeArea(
           child: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
@@ -76,48 +84,48 @@ class _CitaPageState extends State<CitaPage> {
                         children: <Widget>[
                           SizedBox(height: 20),
                           Text(
-                            this.tipoCitaHome == 'C' ? 'Orientación médica por Chat' : 'Orientación médica por Video Llamada',
+                            'Completar datos de tarjeta',
                             style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold, color: Environment.colorApp1),
                             textAlign: TextAlign.center,
                           ),
                           SizedBox(height: 20),
-                          Text(
-                            'Para encontrar al médico indicado que atenderá tu orientación médica, cuéntanos más sobre tus síntomas.',
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
-                            textAlign: TextAlign.center,
+                          CustomInput(
+                            icon: Icons.credit_card,
+                            placeHolder: 'Numero de Tarjeta',
+                            keyboardType: TextInputType.text,
+                            textEditingController: creCtrl,
                           ),
-                          SizedBox(height: 20),
-                          TextField(
-                              maxLines: 10,
-                              controller: sintomasCtrl,
-                              autocorrect: false,
-                              keyboardType: TextInputType.multiline,
-                              onSubmitted: (value) => FocusScope.of(context).unfocus(),
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
-                                  // focusedBorder: InputBorder.none,
-                                  hintText: 'Describe tus síntomas:')),
-                          SizedBox(height: 20),
+                          CustomInput(
+                            icon: Icons.date_range,
+                            placeHolder: 'DD/YY',
+                            keyboardType: TextInputType.text,
+                            textEditingController: creCtrl,
+                          ),
+                          CustomInput(
+                            icon: Icons.credit_card_sharp,
+                            placeHolder: 'XXX',
+                            keyboardType: TextInputType.text,
+                            textEditingController: creCtrl,
+                          ),
+                          Center(
+                            child: Text('Total a Pagar: Q20.00', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+                          ),
+                          SizedBox(height: 20,),
                           BotonAzul(
-                              text: this.tipoCitaHome == 'C' ? 'Iniciar Chat' : 'Iniciar Video Llamada',
-                              onPressed: () => Navigator.pushNamed(context, 'citaPago', arguments: sintomasCtrl.text.trim()),
-                              // onPressed: citaService.autenticando
-                              //     ? null
-                              //     : () async {
-                              //         if (sintomasCtrl.text.trim().isEmpty) {
-                              //           mostrarAlerta(context, 'Alerta', 'Ingresa detalladamente tus sintomas');
-                              //         } else {
-                              //           FocusScope.of(context).unfocus();
-                              //           final crearCitaOK =
-                              //               await citaService.crearCita(sintomasCtrl.text.trim(), this.tipoCitaHome);
-                              //           if (crearCitaOK) {
-                              //             Navigator.pushReplacementNamed(context, 'esperarCita');
-                              //           } else {
-                              //             mostrarAlerta(context, 'Error', 'Chat no disponible');
-                              //           }
-                              //         }
-                              //       }
-                          ),
+                            text: this.tipoCitaHome == 'C' ? 'Iniciar Chat' : 'Iniciar Video Llamada',
+                            onPressed: citaService.autenticando
+                                ? null
+                                : () async {
+                                    // FocusScope.of(context).unfocus();
+                                    final crearCitaOK =
+                                        await citaService.crearCita(strSintomas, this.tipoCitaHome);
+                                    if (crearCitaOK) {
+                                      Navigator.pushReplacementNamed(context, 'esperarCita');
+                                    } else {
+                                      mostrarAlerta(context, 'Error', 'Chat no disponible');
+                                    }
+                                  }
+                        ),
                         ],
                       ),
                     ),

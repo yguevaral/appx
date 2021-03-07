@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class PushNotificationsProvider {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging();
   final _mensajesStreamController = StreamController<String>.broadcast();
   final GlobalKey<NavigatorState> navigatorKey =
       new GlobalKey<NavigatorState>();
@@ -58,15 +58,15 @@ class PushNotificationsProvider {
     //Token APP Unico
 
     // Pedir permiso al usuairo para notis
-    await _firebaseMessaging.requestNotificationPermissions();
-    final token = await _firebaseMessaging.getToken();
+    await firebaseMessaging.requestNotificationPermissions();
+    final token = await firebaseMessaging.getToken();
 
     print('====== FCM token ==========');
     print(token);
     final usuarioService = new UsuariosService();
     usuarioService.setUsuarioTokenApp(token);
 
-    _firebaseMessaging.configure(
+    firebaseMessaging.configure(
       onMessage: onMessage,
       onBackgroundMessage: PushNotificationsProvider.onBackgroundMessage,
       onLaunch: onLaunch,

@@ -3,7 +3,12 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:appx/helpers/mostrar_alerta.dart';
+import 'package:appx/services/auth_service.dart';
+import 'package:appx/services/cita_service.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/settings.dart';
 
@@ -26,6 +31,9 @@ class _CallPageState extends State<CallPage> {
   final _infoStrings = <String>[];
   bool muted = false;
   RtcEngine _engine;
+  String _tipoUsuario;
+  BuildContext blConte;
+
 
   @override
   void dispose() {
@@ -42,6 +50,7 @@ class _CallPageState extends State<CallPage> {
     super.initState();
     // initialize agora sdk
     initialize();
+    this.blConte = context;
   }
 
   Future<void> initialize() async {
@@ -98,10 +107,13 @@ class _CallPageState extends State<CallPage> {
         _users.add(uid);
       });
     }, userOffline: (uid, elapsed) {
-      setState(() {
+      setState(() async {
         final info = 'userOffline: $uid';
         _infoStrings.add(info);
         _users.remove(uid);
+        if (_tipoUsuario == "P") {
+          _onCallEnd(context);
+        }
       });
     }, firstRemoteVideoFrame: (uid, width, height, elapsed) {
       setState(() {
@@ -156,18 +168,12 @@ class _CallPageState extends State<CallPage> {
       case 3:
         return Container(
             child: Column(
-          children: <Widget>[
-            _expandedVideoRow(views.sublist(0, 2)),
-            _expandedVideoRow(views.sublist(2, 3))
-          ],
+          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 3))],
         ));
       case 4:
         return Container(
             child: Column(
-          children: <Widget>[
-            _expandedVideoRow(views.sublist(0, 2)),
-            _expandedVideoRow(views.sublist(2, 4))
-          ],
+          children: <Widget>[_expandedVideoRow(views.sublist(0, 2)), _expandedVideoRow(views.sublist(2, 4))],
         ));
       default:
     }
@@ -175,53 +181,90 @@ class _CallPageState extends State<CallPage> {
   }
 
   /// Toolbar layout
-  Widget _toolbar() {
+  Widget _toolbar(String tipoUsuario) {
     if (widget.role == ClientRole.Audience) return Container();
-    return Container(
-      alignment: Alignment.bottomCenter,
-      padding: const EdgeInsets.symmetric(vertical: 48),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          RawMaterialButton(
-            onPressed: _onToggleMute,
-            child: Icon(
-              muted ? Icons.mic_off : Icons.mic,
-              color: muted ? Colors.white : Colors.blueAccent,
-              size: 20.0,
+
+    if (tipoUsuario == "M") {
+      return Container(
+        alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RawMaterialButton(
+              onPressed: _onToggleMute,
+              child: Icon(
+                muted ? Icons.mic_off : Icons.mic,
+                color: muted ? Colors.white : Colors.blueAccent,
+                size: 20.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: muted ? Colors.blueAccent : Colors.white,
+              padding: const EdgeInsets.all(12.0),
             ),
-            shape: CircleBorder(),
-            elevation: 2.0,
-            fillColor: muted ? Colors.blueAccent : Colors.white,
-            padding: const EdgeInsets.all(12.0),
-          ),
-          RawMaterialButton(
-            onPressed: () => _onCallEnd(context),
-            child: Icon(
-              Icons.call_end,
-              color: Colors.white,
-              size: 35.0,
+            RawMaterialButton(
+              onPressed: () => _onCallEnd(context),
+              child: Icon(
+                Icons.call_end,
+                color: Colors.white,
+                size: 35.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.redAccent,
+              padding: const EdgeInsets.all(15.0),
             ),
-            shape: CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.redAccent,
-            padding: const EdgeInsets.all(15.0),
-          ),
-          RawMaterialButton(
-            onPressed: _onSwitchCamera,
-            child: Icon(
-              Icons.switch_camera,
-              color: Colors.blueAccent,
-              size: 20.0,
+            RawMaterialButton(
+              onPressed: _onSwitchCamera,
+              child: Icon(
+                Icons.switch_camera,
+                color: Colors.blueAccent,
+                size: 20.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.white,
+              padding: const EdgeInsets.all(12.0),
+            )
+          ],
+        ),
+      );
+    } else {
+      return Container(
+        alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.symmetric(vertical: 48),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RawMaterialButton(
+              onPressed: _onToggleMute,
+              child: Icon(
+                muted ? Icons.mic_off : Icons.mic,
+                color: muted ? Colors.white : Colors.blueAccent,
+                size: 20.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: muted ? Colors.blueAccent : Colors.white,
+              padding: const EdgeInsets.all(12.0),
             ),
-            shape: CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.white,
-            padding: const EdgeInsets.all(12.0),
-          )
-        ],
-      ),
-    );
+            RawMaterialButton(
+              onPressed: _onSwitchCamera,
+              child: Icon(
+                Icons.switch_camera,
+                color: Colors.blueAccent,
+                size: 20.0,
+              ),
+              shape: CircleBorder(),
+              elevation: 2.0,
+              fillColor: Colors.white,
+              padding: const EdgeInsets.all(12.0),
+            )
+          ],
+        ),
+      );
+    }
   }
 
   /// Info panel to show logs
@@ -274,8 +317,45 @@ class _CallPageState extends State<CallPage> {
     );
   }
 
-  void _onCallEnd(BuildContext context) {
-    Navigator.pop(context);
+  Future<void> _onCallEnd(BuildContext context) async {
+    if (_tipoUsuario == "M") {
+
+      final citaService = new CitaService();
+      await citaService.setFinalizaMedicoCita(widget.channelName);
+
+      Fluttertoast.showToast(
+        msg: "Envio de cita finalizada por medico",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.grey[300],
+        textColor: Colors.black,
+        fontSize: 16.0
+      );
+    }
+    else{
+      Fluttertoast.showToast(
+          msg: "Cita finalizada por medico",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey[300],
+          textColor: Colors.black,
+          fontSize: 16.0
+        );
+    }
+
+    if (_tipoUsuario == 'P') {
+      // Navigator.pushNamed(context, 'vcitasPaciente');
+      // final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+      // navigatorKey.currentState.pushReplacementNamed('citasPaciente');
+      // Navigator.pushNamed(context, 'citasPaciente');
+      Navigator.pushReplacementNamed(this.blConte, 'citasPaciente');
+    } else {
+      // Navigator.pushNamed(context, 'vcitasMedico');
+      Navigator.pushReplacementNamed(context, 'citasMedico');
+    }
+    // Navigator.pop(context);
   }
 
   void _onToggleMute() {
@@ -291,17 +371,23 @@ class _CallPageState extends State<CallPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final usuario = authService.usuario;
+    _tipoUsuario = usuario.tipo;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Video LLamada'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Video LLamada'),
+      //   centerTitle: true,
+      //   leading: Container(),
+
+      // ),
       backgroundColor: Colors.black,
       body: Center(
         child: Stack(
           children: <Widget>[
-            _viewRows(),
+            //_viewRows(),
             _panel(),
-            _toolbar(),
+            _toolbar(usuario.tipo),
           ],
         ),
       ),

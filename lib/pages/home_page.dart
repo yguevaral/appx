@@ -193,12 +193,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   _drawHistorial(BuildContext context) async {
-    final storage = new FlutterSecureStorage();
+    // final storage = new FlutterSecureStorage();
 
-    final token = await storage.read(key: 'notiBack');
+    // final token = await storage.read(key: 'notiBack');
 
-    mostrarAlerta(context, "NotiBack", token.toString());
-    // Navigator.pushNamed(context, 'usuarios');
+    // mostrarAlerta(context, "NotiBack", token.toString());
+    Navigator.pushNamed(context, 'usuarios');
   }
 
   _showEnLineaMedico(String tipo) {

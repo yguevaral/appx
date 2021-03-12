@@ -10,6 +10,7 @@ import 'package:appx/widgets/custom_input.dart';
 import 'package:appx/widgets/header_drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class CitaPagoPage extends StatefulWidget {
@@ -25,9 +26,14 @@ class _CitaPagoPageState extends State<CitaPagoPage> {
   List<Usuario> usuarios = [];
 
   final sintomasCtrl = TextEditingController();
-  final creCtrl = TextEditingController();
+  final tcNumeroTarjetaCtrl = TextEditingController();
+  final tcNombreTarjetaCtrl = TextEditingController();
+  final tcMesTarjetaCtrl = TextEditingController();
+  final tcAnioTarjetaCtrl = TextEditingController();
+  final tcCVVTarjetaCtrl = TextEditingController();
 
   String tipoCitaHome;
+  String precioCita;
 
   @override
   void initState() {
@@ -42,10 +48,11 @@ class _CitaPagoPageState extends State<CitaPagoPage> {
     final citaService = Provider.of<CitaService>(context);
 
     this.tipoCitaHome = authService.getTipoCitaHombre().toString();
+    this.precioCita = authService.getPrecioCitaHombre().toString();
 
     final strSintomas = ModalRoute.of(context).settings.arguments;
 
-    print('================ Sintormas: ${strSintomas}, ${this.tipoCitaHome} ===============');
+    print('================ Sintormas: ${strSintomas}, ${this.tipoCitaHome}, ${this.precioCita} ===============');
 
     return Scaffold(
         appBar: AppBar(
@@ -92,40 +99,87 @@ class _CitaPagoPageState extends State<CitaPagoPage> {
                           CustomInput(
                             icon: Icons.credit_card,
                             placeHolder: 'Numero de Tarjeta',
-                            keyboardType: TextInputType.text,
-                            textEditingController: creCtrl,
+                            keyboardType: TextInputType.number,
+                            textEditingController: tcNumeroTarjetaCtrl,
+                            maxLength: 16,
                           ),
                           CustomInput(
-                            icon: Icons.date_range,
-                            placeHolder: 'DD/YY',
-                            keyboardType: TextInputType.text,
-                            textEditingController: creCtrl,
+                              icon: Icons.perm_identity,
+                              placeHolder: 'Nombre de Tarjeta',
+                              keyboardType: TextInputType.text,
+                              textEditingController: tcNombreTarjetaCtrl),
+                          Table(
+                            children: [
+                              TableRow(children: [
+                                Column(
+                                  children: [
+                                    CustomInput(
+                                      icon: Icons.date_range,
+                                      placeHolder: 'DD',
+                                      keyboardType: TextInputType.number,
+                                      textEditingController: tcMesTarjetaCtrl,
+                                      maxLength: 2,
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    CustomInput(
+                                      icon: Icons.date_range,
+                                      placeHolder: 'YY',
+                                      keyboardType: TextInputType.number,
+                                      textEditingController: tcAnioTarjetaCtrl,
+                                      maxLength: 2,
+                                    )
+                                  ],
+                                )
+                              ])
+                            ],
                           ),
                           CustomInput(
-                            icon: Icons.credit_card_sharp,
-                            placeHolder: 'XXX',
-                            keyboardType: TextInputType.text,
-                            textEditingController: creCtrl,
+                            icon: Icons.short_text,
+                            placeHolder: 'Codigo CVV',
+                            keyboardType: TextInputType.number,
+                            textEditingController: tcCVVTarjetaCtrl,
+                            maxLength: 3,
                           ),
                           Center(
-                            child: Text('Total a Pagar: Q20.00', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
+                            child: Text('Total a Pagar: ' + this.precioCita,
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
                           ),
-                          SizedBox(height: 20,),
+                          SizedBox(
+                            height: 20,
+                          ),
                           BotonAzul(
-                            text: this.tipoCitaHome == 'C' ? 'Iniciar Chat' : 'Iniciar Video Llamada',
-                            onPressed: citaService.autenticando
-                                ? null
-                                : () async {
-                                    // FocusScope.of(context).unfocus();
-                                    final crearCitaOK =
-                                        await citaService.crearCita(strSintomas, this.tipoCitaHome);
-                                    if (crearCitaOK) {
-                                      Navigator.pushReplacementNamed(context, 'esperarCita');
-                                    } else {
-                                      mostrarAlerta(context, 'Error', 'Chat no disponible');
-                                    }
-                                  }
-                        ),
+                              text: this.tipoCitaHome == 'C' ? 'Iniciar Chat' : 'Iniciar Video Llamada',
+                              onPressed: citaService.autenticando
+                                  ? null
+                                  : () async {
+                                      // FocusScope.of(context).unfocus();
+                                      final arrJsonRes = await citaService.crearCita(
+                                          strSintomas,
+                                          this.tipoCitaHome,
+                                          tcNumeroTarjetaCtrl.text.trim(),
+                                          tcCVVTarjetaCtrl.text.trim(),
+                                          tcNombreTarjetaCtrl.text.trim(),
+                                          tcAnioTarjetaCtrl.text.trim(),
+                                          tcMesTarjetaCtrl.text.trim());
+
+                                      print(arrJsonRes['msg']);
+                                      if (arrJsonRes['ok']) {
+                                        Fluttertoast.showToast(
+                                            msg: "Pago Aprobado",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.TOP,
+                                            timeInSecForIosWeb: 5,
+                                            backgroundColor: Colors.grey[300],
+                                            textColor: Colors.black,
+                                            fontSize: 16.0);
+                                        Navigator.pushReplacementNamed(context, 'esperarCita');
+                                      } else {
+                                        mostrarAlerta(context, 'Alerta', arrJsonRes['msg']);
+                                      }
+                                    }),
                         ],
                       ),
                     ),

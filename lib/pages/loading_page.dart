@@ -19,7 +19,7 @@ class LoadingPage extends StatelessWidget {
               color: Environment.colorApp1,
               child: Center(
                 child: Image(
-                image: AssetImage('assets/splash_logo.jpeg'),
+                image: AssetImage('assets/init_splash.gif'),
                 fit: BoxFit.contain,
                 width: double.infinity
               ),

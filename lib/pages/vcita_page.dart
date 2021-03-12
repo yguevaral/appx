@@ -107,21 +107,22 @@ class _VideoCitaPageState extends State<VideoCitaPage> {
                           BotonAzul(
                               text: 'Iniciar Chat',
                               // onPressed: _fntPageCall)
-                          onPressed: citaService.autenticando
-                              ? null
-                              : () async {
-                                  FocusScope.of(context).unfocus();
-                                  final crearCitaOK =
-                                      await citaService.crearCita(
-                                          sintomasCtrl.text.trim(), 'V');
-                                  if (crearCitaOK) {
-                                    Navigator.pushReplacementNamed(
-                                        context, 'vcitasPaciente');
-                                  } else {
-                                    mostrarAlerta(context, 'Error',
-                                        'Chat no disponible');
-                                  }
-                                }),
+                          // onPressed: citaService.autenticando
+                          //     ? null
+                          //     : () async {
+                          //         FocusScope.of(context).unfocus();
+                          //         final crearCitaOK =
+                          //             await citaService.crearCita(
+                          //                 sintomasCtrl.text.trim(), 'V');
+                          //         if (crearCitaOK) {
+                          //           Navigator.pushReplacementNamed(
+                          //               context, 'vcitasPaciente');
+                          //         } else {
+                          //           mostrarAlerta(context, 'Error',
+                          //               'Chat no disponible');
+                          //         }
+                          //       }
+                          ),
                         ],
                       ),
                     ),

@@ -91,7 +91,7 @@ class _CitaPageState extends State<CitaPage> {
                               maxLines: 10,
                               controller: sintomasCtrl,
                               autocorrect: false,
-                              keyboardType: TextInputType.multiline,
+                              keyboardType: TextInputType.text,
                               onSubmitted: (value) => FocusScope.of(context).unfocus(),
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),

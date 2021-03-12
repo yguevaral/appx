@@ -6,15 +6,17 @@ class CustomInput extends StatelessWidget {
   final TextEditingController textEditingController;
   final TextInputType keyboardType;
   final bool isPassword;
+  final int maxLength;
 
-  const CustomInput({
-    Key key,
-    @required this.icon,
-    @required this.placeHolder,
-    @required this.textEditingController,
-    this.keyboardType = TextInputType.text,
-    this.isPassword = false
-  }) : super(key: key);
+  const CustomInput(
+      {Key key,
+      @required this.icon,
+      @required this.placeHolder,
+      @required this.textEditingController,
+      this.keyboardType = TextInputType.text,
+      this.isPassword = false,
+      this.maxLength = 100})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,25 +24,21 @@ class CustomInput extends StatelessWidget {
       padding: EdgeInsets.only(top: 5.0, left: 5.0, right: 20.0),
       margin: EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30.0),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              offset: Offset(0, 5),
-              blurRadius: 5)
-        ]),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30.0),
+          boxShadow: <BoxShadow>[BoxShadow(color: Colors.black.withOpacity(0.05), offset: Offset(0, 5), blurRadius: 5)]),
       child: TextField(
         controller: this.textEditingController,
         autocorrect: false,
         keyboardType: this.keyboardType,
         obscureText: this.isPassword,
+        maxLength: this.maxLength,
         decoration: InputDecoration(
-          prefixIcon: Icon(this.icon),
-          focusedBorder: InputBorder.none,
-          border: InputBorder.none,
-          hintText: this.placeHolder
-        ),
+            prefixIcon: Icon(this.icon),
+            focusedBorder: InputBorder.none,
+            border: InputBorder.none,
+            hintText: this.placeHolder,
+            counterText: ''),
       ),
     );
   }

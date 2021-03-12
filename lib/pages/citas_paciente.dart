@@ -75,12 +75,14 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () {
+          onPressed: () async {
             if (this.citas.length > 5) {
               mostrarAlerta(context, 'Alerta', 'Solo puedes tener 5 citas en proceso');
             } else {
               authService.tipoCitaHome = this.tipoCitaHome;
-              Navigator.pushNamed(context, 'cita');
+              final strPrecio = await authService.getCitaPrecio(this.tipoCitaHome);
+              authService.precioCitaHome = strPrecio['monto'];
+              Navigator.pushReplacementNamed(context, 'cita');
             }
           }),
     );

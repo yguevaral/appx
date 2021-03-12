@@ -13,12 +13,17 @@ class AuthService with ChangeNotifier {
   Usuario usuario;
   bool _autenticando = false;
   String tipoCitaHome = '';
+  String precioCitaHome = '';
 
   // Create storage
   final _storage = new FlutterSecureStorage();
 
-  String getTipoCitaHombre()  {
+  String getTipoCitaHombre() {
     return this.tipoCitaHome;
+  }
+
+  String getPrecioCitaHombre() {
+    return this.precioCitaHome;
   }
 
   bool get autenticando => this._autenticando;
@@ -65,7 +70,6 @@ class AuthService with ChangeNotifier {
       final usuarioService = new UsuariosService();
       usuarioService.setUsuarioTokenApp(token);
 
-
       return true;
     } else {
       return false;
@@ -98,7 +102,6 @@ class AuthService with ChangeNotifier {
       final usuarioService = new UsuariosService();
       usuarioService.setUsuarioTokenApp(token);
 
-
       return true;
     } else {
       final resBody = jsonDecode(strRespuesta);
@@ -130,5 +133,11 @@ class AuthService with ChangeNotifier {
 
   Future _logout() async {
     await _storage.delete(key: 'token');
+  }
+
+  Future getCitaPrecio(String tipo) async {
+    final resp = await http.get('${Environment.apiUrl}/cita/precio/$tipo');
+
+    return jsonDecode(resp.body);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:appx/global/environment.dart';
+import 'package:appx/pages/empezar_page.dart';
 import 'package:appx/pages/home_page.dart';
-import 'package:appx/pages/login_page.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class LoadingPage extends StatelessWidget {
       Navigator.pushReplacement(
           context,
           PageRouteBuilder(
-              pageBuilder: (_, __, ___) => LoginPage(),
+              pageBuilder: (_, __, ___) => EmpezarPage(),
               transitionDuration: Duration(milliseconds: 0)));
     }
   }

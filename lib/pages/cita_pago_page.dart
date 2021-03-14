@@ -52,7 +52,7 @@ class _CitaPagoPageState extends State<CitaPagoPage> {
 
     final strSintomas = ModalRoute.of(context).settings.arguments;
 
-    print('================ Sintormas: ${strSintomas}, ${this.tipoCitaHome}, ${this.precioCita} ===============');
+    // print('================ Sintormas: ${strSintomas}, ${this.tipoCitaHome}, ${this.precioCita} ===============');
 
     return Scaffold(
         appBar: AppBar(

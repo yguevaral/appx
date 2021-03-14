@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
-import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/services/auth_service.dart';
 import 'package:appx/services/cita_service.dart';
 import 'package:flutter/material.dart';

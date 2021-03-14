@@ -11,8 +11,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
-import 'models/usuario.dart';
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {

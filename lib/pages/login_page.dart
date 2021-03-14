@@ -12,38 +12,46 @@ import 'package:provider/provider.dart';
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final strEmpezarTipo = ModalRoute.of(context).settings.arguments;
+
+    print(strEmpezarTipo);
     return Scaffold(
-      backgroundColor: Color.fromRGBO(247,247,247, 1),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.90,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Logo(
-                  titulo: 'Iniciar sesión',
-                ),
-                _Form(),
-                Labels(
-                  ruta: 'register',
-                  titulo: 'No tienes una cuenta?',
-                  subtitulo: 'Registrate',
-                ),
-                GestureDetector(
-                  onTap: () => showUrlNavegadorInterno('https://appxguatemala.app/'),
-                  child: Text('Terminos y condiciones de uso',
-                      style: TextStyle(fontWeight: FontWeight.w200)),
-                )
-              ],
+        backgroundColor: Color.fromRGBO(247, 247, 247, 1),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.90,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Logo(
+                    titulo: 'Iniciar sesión',
+                  ),
+                  _Form(),
+                  getLabeRegistro(strEmpezarTipo),
+                  GestureDetector(
+                    onTap: () => showUrlNavegadorInterno('https://appxguatemala.app/'),
+                    child: Text('Terminos y condiciones de uso', style: TextStyle(fontWeight: FontWeight.w200)),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
         ));
   }
 
-
+  Widget getLabeRegistro(String strEmpezarTipo) {
+    if (strEmpezarTipo == "M") {
+      return Container();
+    } else {
+      return Labels(
+        ruta: 'register',
+        titulo: 'No tienes una cuenta?',
+        subtitulo: 'Registrate',
+      );
+    }
+  }
 }
 
 class _Form extends StatefulWidget {
@@ -86,15 +94,13 @@ class __FormState extends State<_Form> {
                 : () async {
                     // bajar el teclado
                     FocusScope.of(context).unfocus();
-                    final loginOk = await authService.login(
-                        emailCtrl.text.trim(), passCtrl.text.trim());
+                    final loginOk = await authService.login(emailCtrl.text.trim(), passCtrl.text.trim());
                     if (loginOk) {
                       // Navegar a otra pantalla
                       socketService.connect();
                       Navigator.pushReplacementNamed(context, 'home');
                     } else {
-                      mostrarAlerta(context, 'Login incorrecto',
-                          'Revise sus credenciales nuevamente');
+                      mostrarAlerta(context, 'Login incorrecto', 'Revise sus credenciales nuevamente');
                     }
                   },
           )
@@ -102,7 +108,4 @@ class __FormState extends State<_Form> {
       ),
     );
   }
-
-
-
 }

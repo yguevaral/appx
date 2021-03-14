@@ -1,4 +1,3 @@
-
 import 'package:appx/global/environment.dart';
 import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/helpers/url_navegador.dart';
@@ -35,10 +34,8 @@ class RegisterPage extends StatelessWidget {
                     subtitulo: 'Ingresa ahora!',
                   ),
                   GestureDetector(
-                    onTap: () =>
-                        showUrlNavegadorInterno('https://appxguatemala.app/'),
-                    child: Text('Terminos y condiciones de uso',
-                        style: TextStyle(fontWeight: FontWeight.w200)),
+                    onTap: () => showUrlNavegadorInterno('https://appxguatemala.app/'),
+                    child: Text('Terminos y condiciones de uso', style: TextStyle(fontWeight: FontWeight.w200)),
                   )
                 ],
               ),
@@ -66,7 +63,6 @@ class __FormState extends State<_Form> {
 
   String _opcioneSeleccionadaGenero = 'Masculino';
   List<String> _genero = Environment.registroGenero;
-
 
   @override
   Widget build(BuildContext context) {
@@ -105,12 +101,7 @@ class __FormState extends State<_Form> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30.0),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      offset: Offset(0, 5),
-                      blurRadius: 5)
-                ]),
+                boxShadow: <BoxShadow>[BoxShadow(color: Colors.black.withOpacity(0.05), offset: Offset(0, 5), blurRadius: 5)]),
             child: Container(
               width: 200.0,
               child: ListView(
@@ -147,12 +138,7 @@ class __FormState extends State<_Form> {
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30.0),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      offset: Offset(0, 5),
-                      blurRadius: 5)
-                ]),
+                boxShadow: <BoxShadow>[BoxShadow(color: Colors.black.withOpacity(0.05), offset: Offset(0, 5), blurRadius: 5)]),
             child: Container(
               width: 200.0,
               child: ListView(
@@ -193,14 +179,14 @@ class __FormState extends State<_Form> {
                 ? null
                 : () async {
                     FocusScope.of(context).unfocus();
-                    final registroOk = await authService.register(
-                      nameCtrl.text.trim(),
-                      emailCtrl.text.trim(),
-                      passCtrl.text.trim(),
-                      _opcioneSeleccionadaSintomas,
-                      _opcioneSeleccionadaGenero,
-                      edadCtrl.text.trim()
-                    );
+
+                    if (int.parse(edadCtrl.text) < 18 ) {
+                      mostrarAlerta(context, 'Alerta', 'Edad mínima de registro: 18');
+                      return false;
+                    }
+
+                    final registroOk = await authService.register(nameCtrl.text.trim(), emailCtrl.text.trim(),
+                        passCtrl.text.trim(), _opcioneSeleccionadaSintomas, _opcioneSeleccionadaGenero, edadCtrl.text.trim());
 
                     if (registroOk == true) {
                       socketService.connect();
@@ -219,7 +205,6 @@ class __FormState extends State<_Form> {
     List<DropdownMenuItem<String>> lista = new List();
     _sintomas.forEach((sintoma) {
       lista.add(DropdownMenuItem(
-
         child: Text(sintoma),
         value: sintoma,
       ));
@@ -232,7 +217,6 @@ class __FormState extends State<_Form> {
     List<DropdownMenuItem<String>> lista = new List();
     _genero.forEach((genero) {
       lista.add(DropdownMenuItem(
-
         child: Text(genero),
         value: genero,
       ));

@@ -1,8 +1,6 @@
 import 'package:appx/global/environment.dart';
-import 'package:appx/helpers/mostrar_alerta.dart';
 import 'package:appx/models/usuario.dart';
 import 'package:appx/services/auth_service.dart';
-import 'package:appx/services/cita_service.dart';
 import 'package:appx/services/socket_service.dart';
 import 'package:appx/services/usuarios_service.dart';
 import 'package:appx/widgets/boton_azul.dart';
@@ -36,7 +34,7 @@ class _CitaPageState extends State<CitaPage> {
     final authService = Provider.of<AuthService>(context);
     // final usuario = authService.usuario;
     final socketService = Provider.of<SocketService>(context);
-    final citaService = Provider.of<CitaService>(context);
+    // final citaService = Provider.of<CitaService>(context);
 
     this.tipoCitaHome = authService.getTipoCitaHombre().toString();
 

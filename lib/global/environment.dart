@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Environment {
-  static bool appLocalHost = true;
+  static bool appLocalHost = false;
 
   static String apiUrl = appLocalHost ? 'http://192.168.1.103:3000/api' : 'http://35.224.64.47:3000/api';
 

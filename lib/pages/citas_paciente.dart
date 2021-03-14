@@ -144,11 +144,11 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
   }
 
   _cargarCitas() async {
-    final noti_cita_id = await FlutterSecureStorage().read(key: 'noti_citaid');
+    final notiCitaId = await FlutterSecureStorage().read(key: 'noti_citaid');
     this.tipoCitaHome = await FlutterSecureStorage().read(key: 'tipoCitaHome');
 
-    if (noti_cita_id != null) {
-      final noti_cita_idMedico = await FlutterSecureStorage().read(key: 'noti_citaid_medico');
+    if (notiCitaId != null) {
+      final notiCitaIdMedico = await FlutterSecureStorage().read(key: 'noti_citaid_medico');
       await FlutterSecureStorage().write(key: 'noti_citaid', value: null);
       await FlutterSecureStorage().write(key: 'noti_citaid_medico', value: null);
 
@@ -159,12 +159,12 @@ class _CitasPacientePageState extends State<CitasPacientePage> {
         usuario.tipo = 'M';
         usuario.nombre = 'Medico';
         usuario.email = '';
-        usuario.uid = noti_cita_idMedico;
+        usuario.uid = notiCitaIdMedico;
         chatService.usuarioPara = usuario;
 
         Navigator.pushNamed(context, 'chat');
       } else {
-        onJoin(noti_cita_id);
+        onJoin(notiCitaId);
       }
     }
 

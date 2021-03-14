@@ -4,16 +4,14 @@ import 'package:appx/pages/cita_pago_page.dart';
 import 'package:appx/pages/cita_pregunta_medico_page.dart';
 import 'package:appx/pages/citas_medico.dart';
 import 'package:appx/pages/citas_paciente.dart';
+import 'package:appx/pages/empezar_page.dart';
+import 'package:appx/pages/empezar_seleccion_page.dart';
 import 'package:appx/pages/espera_cita.dart';
 import 'package:appx/pages/home_page.dart';
 import 'package:appx/pages/loading_page.dart';
 import 'package:appx/pages/login_page.dart';
 import 'package:appx/pages/register_page.dart';
 import 'package:appx/pages/usuarios_page.dart';
-import 'package:appx/pages/vcita_page.dart';
-import 'package:appx/pages/vcita_pregunta_medico_page.dart';
-import 'package:appx/pages/vcitas_medico.dart';
-import 'package:appx/pages/vcitas_paciente.dart';
 import 'package:flutter/cupertino.dart';
 
 final Map<String, Widget Function(BuildContext)> appRoutes = {
@@ -29,9 +27,6 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'citaPreguntaMedico' : (_) => CitaPreguntaMedicoPage(),
   'citasMedico' : (_) => CitasMedicoPage(),
   'citaPago' : (_) => CitaPagoPage(),
-  'videocita' : (_) => VideoCitaPage(),
-  'vcitasPaciente' : (_) => VCitasPacientePage(),
-  'vcitasMedico' : (_) => VCitasMedicoPage(),
-  'vcitaPreguntaMedico' : (_) => VCitaPreguntaMedicoPage(),
-
+  'empezar' : (_) => EmpezarPage(),
+  'empezarSeleccion' : (_) => EmpezarSeleccionPage()
 };
